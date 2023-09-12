@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
 import React from 'react'
 import Image from 'next/image'
-import { product } from '@models/product'
+import { Product, ProductSchema } from '@models/models';
 import { THSort } from '@components/TableSort'
 
 const typeColorMap: Record<string, string> = {
@@ -48,13 +48,13 @@ const TypeLabel = ({ type }: TypeLabelProps) => (
 )
 
 type Props = {
-  products: product[];
+  products: Product[];
 } & Pick<Parameters<typeof THSort>[0], 'setSort' | 'setOrder'>
 
-export default function PokemonList(props: Props) {
+export default function ProductList(props: Props) {
   const { products, setSort, setOrder } = props
   console.log("props")
-  console.log(props)
+  console.log(products)
   return (
     <Table responsive bordered hover>
       <thead className="bg-light">
@@ -69,15 +69,12 @@ export default function PokemonList(props: Props) {
       </thead>
       <tbody>
         {products.map((product) => (
-          <tr key={product._id}>
-            <td>{product._id}</td>
-          
+ 
+          <tr key={String(product._id)}>
+            <td>{String(product._id)}</td>
             <td>{product.name}</td>
             <td>{product.price}</td>
-            <td>{product.categories}</td>
-
-      
-
+            <td>{String(product.categories)}</td>
          
           </tr>
         ))}

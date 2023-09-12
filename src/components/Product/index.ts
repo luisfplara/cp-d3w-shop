@@ -1,2 +1,2 @@
 // eslint-disable-next-line import/prefer-default-export
-export { default as PokemonList } from './ProductList'
+export { default as ProductList } from './ProductList'

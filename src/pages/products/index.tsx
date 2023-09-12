@@ -1,23 +1,39 @@
 import { CButton } from '@coreui/react';
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { AdminLayout } from '@layout'
-import {  useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import { Pagination } from '@components/Pagination'
-import { PokemonList } from '@components/Product'
+import { ProductList } from '@components/Product'
 import withApollo from '../../../server/apollo';
 import { GET_PRODUCTS3 } from '../../../server/queries';
 import { Card } from 'react-bootstrap'
+import { useApp } from "../../components/useApp";
+
+import { Product, ProductSchema } from '@models/models';
+
+
+
+import * as Realm from "realm-web";
+import Link from "next/link";
+
 
 
 function Products() {
 
   let { data, loading, error } = useQuery(GET_PRODUCTS3);
-  const [ products, setProducts ] = useState( [] );
+  //const [ products, setProducts ] = useState([]);
+
+  const [products, setProducts] = useState(Array<Product>)
+
+
+
   useEffect(() => {
     if (data) {
       console.log("aaaa");
       console.log(data);
       setProducts(data.products);
+      console.log("products");
+      console.log(products);
     }
 
   }, [data])
@@ -25,15 +41,12 @@ function Products() {
 
 
     <AdminLayout>
-      
-     
-
       <Card>
         <Card.Header>
-        <CButton color="primary" size="lg" href='/products/create'>New</CButton>
+          <CButton color="primary" size="lg" href='/products/create'>New</CButton>
         </Card.Header>
         <Card.Body>
-        <PokemonList products={products} />
+          <ProductList products={products} />
         </Card.Body>
       </Card>
     </AdminLayout>
