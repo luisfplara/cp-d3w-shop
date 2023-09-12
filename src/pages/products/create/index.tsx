@@ -1,17 +1,17 @@
 import React, { FormEvent, useEffect, useLayoutEffect, useState } from 'react'
 import { AdminLayout } from '@layout'
-import { useQuery } from '@apollo/react-hooks';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks';
 import { Pagination } from '@components/Pagination'
 
 import withApollo from '../../../../server/apollo';
 import { GET_PRODUCTS3 } from '../../../../server/queries';
 import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap'
-
+import { INSERT_PRODUCT } from '../../../../server/queries';
 import { Product } from '@models/models';
 
 
 function Products() {
-
+  let [setProduc, { data, loading }] = useMutation(INSERT_PRODUCT);
   const [validated, setValidated] = useState(false);
   type inputs = {
     key: '',
@@ -23,19 +23,35 @@ function Products() {
     event.preventDefault()
     const form = event.currentTarget;
     const formData = new FormData(event.currentTarget)
+
+ 
+
+
     console.log('formData')
-    console.log(formData.entries())
+    console.log(formData.get('name'))
 
+    setProduc({
+      variables: {
+        name: formData.get('name'),
+        short_desc: formData.get('short_desc'),
+        price: formData.get('price'),
+        stock: formData.get('stock'),
+        categories: formData.get('categories'),
+      }
+    }).then((result)=>{
+        console.log('resultresultresultresult');
+      console.log(result);
+
+    });
+
+    //{ variables: { pack_id: parseInt(product.product_code) } }
     formData.forEach((value, key) => {
-
       formValue.push(
         {
           key: key,
           value: value
         }
       );
-
-
     });
     console.log('formValue')
     console.log(formValue)

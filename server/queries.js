@@ -2,82 +2,33 @@ import { GraphQLString } from 'graphql';
 import gql from 'graphql-tag';
 
 
-export const TESTANDO = gql`
-query{
-  brands(order:objectId_ASC){
-    edges{
-      node{
-        objectId
-        name
-        createdAt
-      }
-    }
-  }
-}
-`
-
-export const GET_PRODUCTS2 = gql`
-query teste {
-  products {
-    edges {
-      node {
-        name
-        id
-        name
-        slug
-        price
-        sale_price
-        review
-        ratings
-        until
-        stock
-        top
-        featured
-        new
-        categories {
-            edges {
-    node {
+export const INSERT_PRODUCT =  gql`
+mutation INSERT_PRODUCT(
+  $name: String!,
+  $short_desc: String!, 
+  $price: Float!, 
+  $stock: Int!,
+	$categories:[String]!) {
+  insertOneProduct(data: {
+    name: $name,
+    short_desc:$short_desc,
+    price:$price,
+    stock:$stock,
+    categories:{link:$categories}}) {
+      
+    _id
+    name
+    short_desc
+    price
+    stock
+    categories{
       name
-      slug
     }
-  }
-        }
-        sm_pictures {
-          edges {
-            node {
-              width
-              height
-              file {
-                url
-              }
-            }
-          }
-        }
-
-        variants {
-          edges {
-            node {
-              color
-              color_name
-              price
-              sizes {
-                edges {
-                  node {
-                    name
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+      
   }
 }
 
-
 `
-
 export const GET_PRODUCTS3 = gql`
 query products {
   products {
@@ -504,62 +455,3 @@ export const GET_HOME_DATA = gql`
 }
 
 `
-
-export function translator_GET_PRODUCTS(data) {
-  console.log("data")
-  var translation = JSON.parse(data)
-  console.log(translation);
-
-
-  if(Array.isArray(translation)){
-    translation.forEach((value, index) => {
-      
-      if(value.node){
-        translation[index] = value.node
-    
-      }
-    });
-  }else{
-    
-      
-      if(value.edges){
-        translation= value.edges
-    
-      }
-
-
-  }
-
-
-
-
-
-
-//return translation
-}
-
-
-/*
-export function translator_GET_PRODUCTS(data) {
-  console.log("data")
-  var translation = JSON.parse(data)
-  console.log(translation);
-
-
-  for(var i =0; i<translation.length; i++){
-    translation[i] = translation[i].node;
-    translation[i].sm_pictures = translation[i].sm_pictures.edges
-    translation[i].sm_pictures.forEach((value, index) => {
-      translation[i].sm_pictures[index] = value.node
-    });
-    //translation[i].sm_pictures = translation[i].sm_pictures.node
-  }
-
-
-
-
-
-
-return translation
-}
-*/
