@@ -8,7 +8,7 @@ import withApollo from '../../../server/apollo';
 import { GET_PRODUCTS3 } from '../../../server/queries';
 import { Card } from 'react-bootstrap'
 import { useApp } from "../../components/useApp";
-
+import { INSERT_PRODUCT } from '../../../server/queries';
 import { Product, ProductSchema } from '@models/models';
 
 

@@ -24,6 +24,7 @@ export default function Header(props: HeaderProps) {
           type="button"
           onClick={toggleSidebar}
         >
+          aaaaaaaa
           <FontAwesomeIcon icon={faBars} />
         </Button>
         <Button
@@ -35,14 +36,13 @@ export default function Header(props: HeaderProps) {
           <FontAwesomeIcon icon={faBars} />
         </Button>
         <Link href="/" className="header-brand d-md-none">
+        aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
           <svg width="80" height="46">
-            <title>CoreUI Logo</title>
+            <title>aaaaaaaaaaaaaaaaaaaaaaaa</title>
             <use xlinkHref="/assets/brand/coreui.svg#full" />
           </svg>
         </Link>
-        <div className="header-nav d-none d-md-flex">
-          <HeaderFeaturedNav />
-        </div>
+  
         <div className="header-nav ms-auto">
           <HeaderNotificationNav />
         </div>

@@ -1,85 +1,127 @@
-import React, { FormEvent, useEffect, useLayoutEffect, useState } from 'react'
-import { AdminLayout } from '@layout'
-import { useLazyQuery, useMutation, useQuery } from '@apollo/react-hooks';
-import { Pagination } from '@components/Pagination'
-
-import withApollo from '../../../../server/apollo';
-import { GET_PRODUCTS3 } from '../../../../server/queries';
-import { Button, Card, Col, Form, InputGroup, Row } from 'react-bootstrap'
-import { INSERT_PRODUCT } from '../../../../server/queries';
-import { Product } from '@models/models';
-
+import React, {
+  FormEvent,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { AdminLayout } from "@layout";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
+import { Pagination } from "@components/Pagination";
+import Multiselect from "multiselect-react-dropdown";
+import withApollo from "../../../../server/apollo";
+import { GET_CATEGORIES, GET_PRODUCTS3 } from "../../../../server/queries";
+import {
+  Button,
+  Card,
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Modal,
+  Row,
+  Image,
+  Table,
+} from "react-bootstrap";
+import { INSERT_PRODUCT } from "../../../../server/queries";
+import { Product } from "@models/models";
 
 function Products() {
-  let [setProduc, { data, loading }] = useMutation(INSERT_PRODUCT);
+  let [setProduc] = useMutation(INSERT_PRODUCT);
   const [validated, setValidated] = useState(false);
-  type inputs = {
-    key: '',
-    value: ''
-  }
-  const formValue = Array()
+  const [categories, setCategories] = useState([""]);
+  const [selectedCategories, setSelectedCategories] = useState([""]);
+  const [images, setImages] = useState<FileList>();
+  const [show, setShow] = useState(false);
+  const { data: categories_data } = useQuery(GET_CATEGORIES);
+
+  const [imagetURL, setImagetURL] = useState(Array<string>());
+  const resetSelectedValues = useRef<Multiselect>(null);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const formValue = Array();
+
+  useEffect(() => {
+    if (categories_data.categories) {
+      console.log("categoriescategories");
+      let aux = [""];
+      console.log(categories_data.categories);
+      categories_data.categories.map((item: { name: string }) => {
+        aux.push(item.name);
+      });
+      setCategories(aux);
+    }
+  }, [categories_data]);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+    event.preventDefault();
     const form = event.currentTarget;
-    const formData = new FormData(event.currentTarget)
+    const formData = new FormData(event.currentTarget);
 
- 
+    if (form.checkValidity() === true) {
+      // const imagesUrl = uploadImgToServer();
+      const imagesUrl = await uploadImgToServer();
+      console.log("selectedCategories");
+      console.log(selectedCategories);
 
+      setProduc({
+        variables: {
+          name: formData.get("name"),
+          short_desc: formData.get("short_desc"),
+          price: formData.get("price"),
+          stock: formData.get("stock"),
+          categories: selectedCategories,
+          images: imagesUrl.file,
+        },
+      }).then((result) => {
+        console.log("resultresultresultresult");
+        console.log(result);
+        setValidated(false);
+        form.reset();
+        setImagetURL([]);
+        resetSelectedValues.current?.resetSelectedValues();
+      });
 
-    console.log('formData')
-    console.log(formData.get('name'))
+      console.log("formData");
+      console.log(formData);
 
-    setProduc({
-      variables: {
-        name: formData.get('name'),
-        short_desc: formData.get('short_desc'),
-        price: formData.get('price'),
-        stock: formData.get('stock'),
-        categories: formData.get('categories'),
-      }
-    }).then((result)=>{
-        console.log('resultresultresultresult');
-      console.log(result);
-
-    });
-
-    //{ variables: { pack_id: parseInt(product.product_code) } }
-    formData.forEach((value, key) => {
-      formValue.push(
-        {
-          key: key,
-          value: value
-        }
-      );
-    });
-    console.log('formValue')
-    console.log(formValue)
-    if (form.checkValidity() === false) {
-
-      event.stopPropagation();
+      //  event.stopPropagation();
     }
-
     setValidated(true);
-    /*
-    const response = await fetch('/api/submit', {
-      method: 'POST',
-      body: formData,
-    })
- 
-    // Handle response if necessary
-    const data = await response.json()
-    console.log('datadatadatadata')
-    console.log(data)
-    setValidated(true);
-    // ...*/
   }
 
+  const uploadImgToServer = async () => {
+    const body = new FormData();
+    console.log("file", images);
+    //s
+
+    Array.from(images ? images : []).forEach((file) => {
+      body.append("file", file);
+    });
+
+    const response = await fetch("../../api/upload", {
+      method: "POST",
+      body,
+    });
+
+    return response.json();
+  };
+
+  const imagesHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setImages(event.target.files);
+      let listFiles = Array<string>();
+      Array.from(event.target.files).map((item) => {
+        listFiles.push(URL.createObjectURL(item));
+      });
+
+      setImagetURL(listFiles);
+    }
+  };
 
   return (
     <AdminLayout>
       <Form noValidate validated={validated} onSubmit={onSubmit}>
-
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Nome</Form.Label>
           <Form.Control required type="text" name="name" />
@@ -90,7 +132,7 @@ function Products() {
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Description</Form.Label>
-          <Form.Control required as="textarea" rows={3} name='short_desc' />
+          <Form.Control required as="textarea" rows={3} name="short_desc" />
           <Form.Control.Feedback type="invalid">
             <span>É necessário inserir uma descrição para o produto</span>
           </Form.Control.Feedback>
@@ -101,30 +143,25 @@ function Products() {
           <Row>
             <Col>
               <InputGroup className="mb-3">
-
                 <InputGroup.Text>Normal</InputGroup.Text>
-                <Form.Control required name='price' />
+                <Form.Control required name="price" />
                 <Form.Control.Feedback type="invalid">
                   <span>É necessário inserir o valor produto</span>
                 </Form.Control.Feedback>
-
               </InputGroup>
             </Col>
             <Col>
               <InputGroup className="mb-3">
-
                 <InputGroup.Text>Promoção</InputGroup.Text>
-                <Form.Control name='sale_price' />
-
+                <Form.Control name="sale_price" />
               </InputGroup>
             </Col>
-
           </Row>
         </Form.Group>
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Stock</Form.Label>
-          <Form.Control required name='stock' />
+          <Form.Control required name="stock" />
           <Form.Control.Feedback type="invalid">
             <span>É necessário inserir a quantidade em estoque do produto</span>
           </Form.Control.Feedback>
@@ -132,20 +169,58 @@ function Products() {
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Categories</Form.Label>
-          <Form.Select defaultValue="Choose..." name='categories'>
-            <option>Choose...</option>
-            <option>a</option>
-            <option>b</option>
-            <option>c</option>
-          </Form.Select>
+          <Row>
+            <Col>
+              <Multiselect
+                ref={resetSelectedValues}
+                placeholder={"Selecione"}
+                options={categories}
+                isObject={false}
+                displayValue="name"
+                onSelect={(selectedList) => {
+                  setSelectedCategories(selectedList);
+                }}
+                onRemove={(selectedList) => {
+                  setSelectedCategories(selectedList);
+                }}
+              />
+            </Col>
+            <Col md="auto">
+              <Button
+                onClick={handleShow}
+                variant="outline-secondary"
+                id="button-addon2"
+              >
+                Criar
+              </Button>
+            </Col>
+          </Row>
         </Form.Group>
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Images</Form.Label>
-          <Form.Control required type="file" multiple name='sm_pictures' />
+          <Form.Control
+            required
+            type="file"
+            multiple
+            name="sm_pictures"
+            onChange={imagesHandler}
+          />
           <Form.Control.Feedback type="invalid">
             <span>É necessário inserir ao menos uma imagem para o produto</span>
           </Form.Control.Feedback>
+        </Form.Group>
+
+        <Form.Group controlId="formFileMultiple" className="mb-3">
+          <Row className="align-items-center">
+            {imagetURL.length > 1
+              ? imagetURL.map((image, index) => (
+                  <Col md="auto" key={index}>
+                    <Image height="100px" width="100px" src={image} rounded />
+                  </Col>
+                ))
+              : ""}
+          </Row>
         </Form.Group>
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
@@ -154,113 +229,29 @@ function Products() {
           </Button>
         </Form.Group>
       </Form>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Criar nova categoria</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Label>Nome</Form.Label>
+          <Form.Control required type="text" name="name" />
+          <Form.Control.Feedback type="invalid">
+            <span>É necessário inserir um nome para o produto</span>
+          </Form.Control.Feedback>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Fechar
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Salvar
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </AdminLayout>
-
-  )
-}
-function submitProduct() {
-
+  );
 }
 
-//  <PokemonList products={products} />
-export default withApollo({ ssr: typeof window == 'undefined' })(Products);
-/*
-
-    <AdminLayout>
-
-      <CForm >
-        <div className="mb-3">
-          <CFormLabel >Name</CFormLabel>
-          <CFormInput type="text" />
-        </div>
-        <div className="mb-3">
-          <CFormLabel >Description</CFormLabel>
-          <CFormTextarea id="exampleFormControlTextarea1" rows={2}></CFormTextarea>
-        </div>
-
-        <CRow xs={{ gutter: 2 }}>
-          <CFormLabel >Price</CFormLabel>
-          <CCol md>
-            <CInputGroup className="mb-3">
-              <CInputGroupText>Regular</CInputGroupText>
-              <CFormInput type="text" />
-            </CInputGroup>
-          </CCol>
-          <CCol md>
-            <CInputGroup className="mb-3">
-              <CInputGroupText>Sale</CInputGroupText>
-              <CFormInput type="text" />
-            </CInputGroup>
-          </CCol>
-        </CRow>
-        <div className="mb-3">
-          <CFormLabel >Stock</CFormLabel>
-          <CFormInput type="text" />
-        </div>
-        <CInputGroup className="mb-3">
-          <CInputGroupText component="label" htmlFor="inputGroupSelect01">Options</CInputGroupText>
-          <CFormSelect id="inputGroupSelect01">
-            <option>Choose...</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
-          </CFormSelect>
-        </CInputGroup>
-        <div className="mb-3">
-          <CFormInput type="file" id="formFileMultiple" label="Images" multiple />
-        </div>
-
-      </CForm>
-    </AdminLayout>
-    
-
-
-*/
-
-
-/*
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-  const pokemonListURL = `${process.env.NEXT_PUBLIC_POKEMON_LIST_API_BASE_URL}pokemons` || ''
-  let page = 1
-  if (context.query?.page && typeof context.query.page === 'string') {
-    page = parseInt(context.query.page, 10)
-  }
-
-  let perPage = 20
-  if (context.query?.per_page && typeof context.query.per_page === 'string') {
-    perPage = parseInt(context.query.per_page.toString(), 10)
-  }
-
-  let sort = 'id'
-  if (context.query?.sort && typeof context.query.sort === 'string') {
-    sort = context.query.sort
-  }
-
-  let order = 'asc'
-  if (context.query?.order && typeof context.query.order === 'string') {
-    order = context.query.order
-  }
-
-  const { data: pokemons, headers } = await axios.get<Pokemon[]>(pokemonListURL, {
-    params: {
-      _page: page,
-      _limit: perPage,
-      _sort: sort,
-      _order: order,
-    },
-  })
-
-  const total = parseInt(headers['x-total-count'], 10)
-  const pokemonResource: Resource<Pokemon> = newResource(pokemons, total, page, perPage)
-
-  return {
-    props: {
-      pokemonResource,
-      page,
-      perPage,
-      sort,
-      order,
-    }, // will be passed to the page component as props
-  }
-}
-*/
+export default withApollo({ ssr: typeof window == "undefined" })(Products);
