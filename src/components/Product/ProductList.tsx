@@ -1,84 +1,234 @@
-import { Dropdown, Table } from 'react-bootstrap'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEllipsisVertical } from '@fortawesome/free-solid-svg-icons'
-import React from 'react'
-import Image from 'next/image'
-import { Product, ProductSchema } from '@models/models';
-import { THSort } from '@components/TableSort'
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  MaterialReactTable,
+  type MaterialReactTableProps,
+  type MRT_Cell,
+  type MRT_ColumnDef,
+  type MRT_Row,
+} from "material-react-table";
+import {
+  Box,
+  Button,
+  Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  MenuItem,
+  Stack,
+  TextField,
+  TextFieldProps,
+  Tooltip,
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 
-const typeColorMap: Record<string, string> = {
-  normal: '#aa9',
-  fighting: '#b54',
-  flying: '#89f',
-  poison: '#a59',
-  ground: '#db5',
-  rock: '#ba6',
-  bug: '#ab2',
-  ghost: '#66b',
-  steel: '#aab',
-  fire: '#f42',
-  water: '#39f',
-  grass: '#7c5',
-  electric: '#fc3',
-  psychic: '#f59',
-  ice: '#6cf',
-  dragon: '#76e',
-  dark: '#754',
-  fairy: '#e9e',
-  unknown: '#aa9',
-  shadow: '#aa9',
-}
-
-type TypeLabelProps = {
-  type: string;
-}
-
-const TypeLabel = ({ type }: TypeLabelProps) => (
-  <span
-    className="text-white d-inline-block text-uppercase text-center rounded-1 shadow-sm me-2"
-    style={{
-      backgroundColor: typeColorMap[type],
-      textShadow: '1px 1px 2px rgb(0 0 0 / 70%)',
-      fontSize: '.7rem',
-      width: '70px',
-    }}
-  >
-    {type}
-  </span>
-)
+import { Category, Media, Product } from "@models/models";
+import { List } from "realm";
 
 type Props = {
-  products: Product[];
-} & Pick<Parameters<typeof THSort>[0], 'setSort' | 'setOrder'>
+  productData: Product[];
+};
 
-export default function ProductList(props: Props) {
-  const { products, setSort, setOrder } = props
-  console.log("props")
-  console.log(products)
+const ProductList = ({ productData }: Props) => {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [tableData, setTableData] = useState<Product[]>(() => productData);
+  const [validationErrors, setValidationErrors] = useState<{
+    [cellId: string]: string;
+  }>({});
+
+  const handleSaveRowEdits: MaterialReactTableProps<Product>["onEditingRowSave"] =
+    async ({ exitEditingMode, row, values }) => {
+      if (!Object.keys(validationErrors).length) {
+        tableData[row.index] = values;
+        //send/receive api updates here, then refetch or update local table data for re-render
+        setTableData([...tableData]);
+        exitEditingMode(); //required to exit editing mode and close modal
+      }
+    };
+
+  const handleCancelRowEdits = () => {
+    setValidationErrors({});
+  };
+
+  const handleDeleteRow = useCallback(
+    (row: MRT_Row<Product>) => {
+      if (!confirm(`Are you sure you want to delete ${row.getValue("name")}`)) {
+        return;
+      }
+      //send api delete request here, then refetch or update local table data for re-render
+      setTableData(tableData.splice(row.index, 1));
+      //setTableData([...tableData]);
+    },
+    [tableData]
+  );
+
+  const getCommonEditTextFieldProps = useCallback(
+    (
+      cell: MRT_Cell<Product>
+    ): MRT_ColumnDef<Product>["muiTableBodyCellEditTextFieldProps"] => {
+      return {
+        error: !!validationErrors[cell.id],
+        helperText: validationErrors[cell.id],
+        onBlur: (event: { target: { value: string } }) => {
+          const isValid =
+            cell.column.id === "email"
+              ? validateEmail(event.target.value)
+              : cell.column.id === "age"
+              ? validateAge(+event.target.value)
+              : validateRequired(event.target.value);
+          if (!isValid) {
+            //set validation error for cell if invalid
+            setValidationErrors({
+              ...validationErrors,
+              [cell.id]: `${cell.column.columnDef.header} is required`,
+            });
+          } else {
+            //remove validation error for cell if valid
+            delete validationErrors[cell.id];
+            setValidationErrors({
+              ...validationErrors,
+            });
+          }
+        },
+      };
+    },
+    [validationErrors]
+  );
+
+  const columns = useMemo<MRT_ColumnDef<Product>[]>(
+    () => [
+      {
+        accessorKey: "_id",
+        header: "ID",
+        enableColumnOrdering: false,
+        enableEditing: false, //disable editing on this column
+        enableSorting: false,
+        size: 80,
+      },
+      {
+        //accessorFn used to join multiple data into a single cell
+        id: "sm_pictures", //id is still required when using accessorFn instead of accessorKey
+        header: "Categories",
+        size: 250,
+        accessorFn: (row) => row.sm_pictures,
+        Cell: ({ renderedCellValue, row, column, cell }) => {
+          const categoriesArray = cell.getValue<[Media]>();
+          return categoriesArray.map((element: Media, index) => {
+            return <img
+            key ={index}
+            alt="product picture"
+
+            height={40}
+
+            src={element.url}
+
+            loading="lazy"
+
+           
+
+          />
+            
+          
+          });
+        },
+      },
+      {
+        accessorKey: "name",
+        header: "Name",
+        size: 140,
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        accessorKey: "price",
+        header: "Price",
+        size: 140,
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        accessorKey: "stock",
+        header: "Stock",
+        size: 140,
+        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        //accessorFn used to join multiple data into a single cell
+        id: "categories", //id is still required when using accessorFn instead of accessorKey
+
+        header: "Categories",
+        size: 250,
+        accessorFn: (row) => row.categories,
+        Cell: ({ renderedCellValue, row, column, cell }) => {
+          const categoriesArray = cell.getValue<[Category]>();
+          return categoriesArray.map((element: Category, index) => {
+            return <Chip key={index} label={element.name} />;
+          });
+        },
+      },
+    ],
+    [getCommonEditTextFieldProps]
+  );
+
   return (
-    <Table responsive bordered hover>
-      <thead className="bg-light">
-        <tr>
-          <th><THSort name="_id" setSort={setSort} setOrder={setOrder}>id</THSort></th>
-          <th><THSort name="name" setSort={setSort} setOrder={setOrder}>Name</THSort></th>
-          <th><THSort name="name" setSort={setSort} setOrder={setOrder}>Price</THSort></th>
-    
+    <>
+      <MaterialReactTable
+        displayColumnDefOptions={{
+          "mrt-row-actions": {
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            size: 120,
+          },
+        }}
+        columns={columns}
+        data={tableData}
+        editingMode="modal" //default
+        enableColumnOrdering
+        enableEditing
+        onEditingRowSave={handleSaveRowEdits}
+        onEditingRowCancel={handleCancelRowEdits}
+        renderRowActions={({ row, table }) => (
+          <Box sx={{ display: "flex", gap: "1rem" }}>
+            <Tooltip arrow placement="left" title="Edit">
+              <IconButton onClick={() => table.setEditingRow(row)}>
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip arrow placement="right" title="Delete">
+              <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
+      />
+    </>
+  );
+};
 
-
-        </tr>
-      </thead>
-      <tbody>
-        {products.map((product) => (
- 
-          <tr key={String(product._id)}>
-            <td>{String(product._id)}</td>
-            <td>{product.name}</td>
-            <td>{product.price}</td>
-            <td>{String(product.categories)}</td>
-         
-          </tr>
-        ))}
-      </tbody>
-    </Table>
-  )
+interface CreateModalProps {
+  columns: MRT_ColumnDef<Product>[];
+  onClose: () => void;
+  onSubmit: (values: Product) => void;
+  open: boolean;
 }
+
+const validateRequired = (value: string) => !!value.length;
+
+const validateEmail = (email: string) =>
+  !!email.length &&
+  email
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+
+const validateAge = (age: number) => age >= 18 && age <= 50;
+
+export default ProductList;

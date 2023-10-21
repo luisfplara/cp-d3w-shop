@@ -1,106 +1,296 @@
-import { GetServerSideProps, NextPage } from 'next'
-import { Card } from 'react-bootstrap'
-import axios from 'axios'
-import React from 'react'
-import { AdminLayout } from '@layout'
-import { Pokemon } from '@models/pokemon'
-import { newResource, Resource } from '@models/resource'
-import { Pagination } from '@components/Pagination'
-import { PokemonList } from '@components/Pokemon'
-import { transformResponseWrapper, useSWRAxios } from '@hooks'
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  MaterialReactTable,
+  type MaterialReactTableProps,
+  type MRT_Cell,
+  type MRT_ColumnDef,
+  type MRT_Row,
+} from "material-react-table";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  IconButton,
+  MenuItem,
+  Stack,
+  TextField,
+  TextFieldProps,
+  Tooltip,
+} from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 
-type Props = {
-  pokemonResource: Resource<Pokemon>;
-  page: number;
-  perPage: number;
-  sort: string;
-  order: string;
-}
+import { data, states } from "./makeData";
 
-const Pokemons: NextPage<Props> = (props) => {
-  const {
-    pokemonResource, page, perPage, sort, order,
-  } = props
+export type Person = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  age: number;
+  state: string;
+};
 
-  const pokemonListURL = `${process.env.NEXT_PUBLIC_POKEMON_LIST_API_BASE_URL}pokemons` || ''
+const Example = () => {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [tableData, setTableData] = useState<Person[]>(() => data);
+  const [validationErrors, setValidationErrors] = useState<{
+    [cellId: string]: string;
+  }>({});
 
-  // swr: data -> axios: data -> resource: data
-  const { data: { data: resource } } = useSWRAxios<Resource<Pokemon>>({
-    url: pokemonListURL,
-    params: {
-      _page: page,
-      _limit: perPage,
-      _sort: sort,
-      _order: order,
+  const handleCreateNewRow = (values: Person) => {
+    tableData.push(values);
+    setTableData([...tableData]);
+  };
+
+  const handleSaveRowEdits: MaterialReactTableProps<Person>["onEditingRowSave"] =
+    async ({ exitEditingMode, row, values }) => {
+      if (!Object.keys(validationErrors).length) {
+        tableData[row.index] = values;
+        //send/receive api updates here, then refetch or update local table data for re-render
+        setTableData([...tableData]);
+        exitEditingMode(); //required to exit editing mode and close modal
+      }
+    };
+
+  const handleCancelRowEdits = () => {
+    setValidationErrors({});
+  };
+
+  const handleDeleteRow = useCallback(
+    (row: MRT_Row<Person>) => {
+      if (
+        !confirm(`Are you sure you want to delete ${row.getValue("firstName")}`)
+      ) {
+        return;
+      }
+      //send api delete request here, then refetch or update local table data for re-render
+      tableData.splice(row.index, 1);
+      setTableData([...tableData]);
     },
-    transformResponse: transformResponseWrapper((d: Pokemon[], h) => {
-      const total = h ? parseInt(h['x-total-count'], 10) : 0
-      return newResource(d, total, page, perPage)
-    }),
-  }, {
-    data: pokemonResource,
-    headers: {
-      'x-total-count': pokemonResource.meta.total.toString(),
+    [tableData]
+  );
+
+  const getCommonEditTextFieldProps = useCallback(
+    (
+      cell: MRT_Cell<Person>
+    ): MRT_ColumnDef<Person>["muiTableBodyCellEditTextFieldProps"] => {
+      return {
+        error: !!validationErrors[cell.id],
+        helperText: validationErrors[cell.id],
+        onBlur: (event: { target: { value: string } }) => {
+          const isValid =
+            cell.column.id === "email"
+              ? validateEmail(event.target.value)
+              : cell.column.id === "age"
+              ? validateAge(+event.target.value)
+              : validateRequired(event.target.value);
+          if (!isValid) {
+            //set validation error for cell if invalid
+            setValidationErrors({
+              ...validationErrors,
+              [cell.id]: `${cell.column.columnDef.header} is required`,
+            });
+          } else {
+            //remove validation error for cell if valid
+            delete validationErrors[cell.id];
+            setValidationErrors({
+              ...validationErrors,
+            });
+          }
+        },
+      };
     },
-  })
+    [validationErrors]
+  );
+
+  const columns = useMemo<MRT_ColumnDef<Person>[]>(
+    () => [
+      {
+        accessorKey: "_id",
+        header: "ID",
+        enableColumnOrdering: false,
+        enableEditing: false, //disable editing on this column
+        enableSorting: false,
+        size: 80,
+      },
+      {
+        accessorKey: "name",
+        header: "Name",
+        size: 140,
+        muiTableBodyCellEditTextFieldProps: ({cell}) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        accessorKey: "price",
+        header: "Price",
+        size: 140,
+        muiTableBodyCellEditTextFieldProps: ({cell}) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        accessorKey: "categories",
+        header: "Categories",
+        muiTableBodyCellEditTextFieldProps: ({cell}) => ({
+          ...getCommonEditTextFieldProps(cell),
+        }),
+      },
+      {
+        accessorKey: "state",
+        header: "State",
+        muiTableBodyCellEditTextFieldProps: {
+          select: true, //change to select for a dropdown
+          children: states.map(
+            (
+              state:
+                | boolean
+                | React.ReactElement<
+                    any,
+                    string | React.JSXElementConstructor<any>
+                  >
+                | Iterable<React.ReactNode>
+                | React.PromiseLikeOfReactNode
+                | React.Key
+                | null
+                | undefined
+            ) => (
+              <MenuItem key={state?.toString()} value={state?.toString()}>
+                {state}
+              </MenuItem>
+            )
+          ),
+        },
+      },
+    ],
+    [getCommonEditTextFieldProps]
+  );
 
   return (
-    <AdminLayout>
-      <Card>
-        <Card.Header>Pokémon</Card.Header>
-        <Card.Body>
-          <Pagination meta={resource.meta} />
-          <PokemonList pokemons={resource.data} />
-          <Pagination meta={resource.meta} />
-        </Card.Body>
-      </Card>
-    </AdminLayout>
-  )
+    <>
+      <MaterialReactTable
+        displayColumnDefOptions={{
+          "mrt-row-actions": {
+            muiTableHeadCellProps: {
+              align: "center",
+            },
+            size: 120,
+          },
+        }}
+        columns={columns}
+        data={tableData}
+        editingMode="modal" //default
+        enableColumnOrdering
+        enableEditing
+        onEditingRowSave={handleSaveRowEdits}
+        onEditingRowCancel={handleCancelRowEdits}
+        renderRowActions={({ row, table }) => (
+          <Box sx={{ display: "flex", gap: "1rem" }}>
+            <Tooltip arrow placement="left" title="Edit">
+              <IconButton onClick={() => table.setEditingRow(row)}>
+                <Edit />
+              </IconButton>
+            </Tooltip>
+            <Tooltip arrow placement="right" title="Delete">
+              <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+                <Delete />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
+        renderTopToolbarCustomActions={() => (
+          <Button
+            color="secondary"
+            onClick={() => setCreateModalOpen(true)}
+            variant="contained"
+          >
+            Create New Account
+          </Button>
+        )}
+      />
+      <CreateNewAccountModal
+        columns={columns}
+        open={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        onSubmit={handleCreateNewRow}
+      />
+    </>
+  );
+};
+
+interface CreateModalProps {
+  columns: MRT_ColumnDef<Person>[];
+  onClose: () => void;
+  onSubmit: (values: Person) => void;
+  open: boolean;
 }
 
-export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
-  const pokemonListURL = `${process.env.NEXT_PUBLIC_POKEMON_LIST_API_BASE_URL}pokemons` || ''
-  let page = 1
-  if (context.query?.page && typeof context.query.page === 'string') {
-    page = parseInt(context.query.page, 10)
-  }
+//example of creating a mui dialog modal for creating new rows
+export const CreateNewAccountModal = ({
+  open,
+  columns,
+  onClose,
+  onSubmit,
+}: CreateModalProps) => {
+  const [values, setValues] = useState<any>(() =>
+    columns.reduce((acc, column) => {
+      acc[column.accessorKey ?? ""] = "";
+      return acc;
+    }, {} as any)
+  );
 
-  let perPage = 20
-  if (context.query?.per_page && typeof context.query.per_page === 'string') {
-    perPage = parseInt(context.query.per_page.toString(), 10)
-  }
+  const handleSubmit = () => {
+    //put your validation logic here
+    onSubmit(values);
+    onClose();
+  };
 
-  let sort = 'id'
-  if (context.query?.sort && typeof context.query.sort === 'string') {
-    sort = context.query.sort
-  }
+  return (
+    <Dialog open={open}>
+      <DialogTitle textAlign="center">Create New Account</DialogTitle>
+      <DialogContent>
+        <form onSubmit={(e) => e.preventDefault()}>
+          <Stack
+            sx={{
+              width: "100%",
+              minWidth: { xs: "300px", sm: "360px", md: "400px" },
+              gap: "1.5rem",
+            }}
+          >
+            {columns.map((column) => (
+              <TextField
+                key={column.accessorKey}
+                label={column.header}
+                name={column.accessorKey}
+                onChange={(e) =>
+                  setValues({ ...values, [e.target.name]: e.target.value })
+                }
+              />
+            ))}
+          </Stack>
+        </form>
+      </DialogContent>
+      <DialogActions sx={{ p: "1.25rem" }}>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button color="secondary" onClick={handleSubmit} variant="contained">
+          Create New Account
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
-  let order = 'asc'
-  if (context.query?.order && typeof context.query.order === 'string') {
-    order = context.query.order
-  }
+const validateRequired = (value: string) => !!value.length;
+const validateEmail = (email: string) =>
+  !!email.length &&
+  email
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+const validateAge = (age: number) => age >= 18 && age <= 50;
 
-  const { data: pokemons, headers } = await axios.get<Pokemon[]>(pokemonListURL, {
-    params: {
-      _page: page,
-      _limit: perPage,
-      _sort: sort,
-      _order: order,
-    },
-  })
-
-  const total = parseInt(headers['x-total-count'], 10)
-  const pokemonResource: Resource<Pokemon> = newResource(pokemons, total, page, perPage)
-
-  return {
-    props: {
-      pokemonResource,
-      page,
-      perPage,
-      sort,
-      order,
-    }, // will be passed to the page component as props
-  }
-}
-
-export default Pokemons
+export default Example;

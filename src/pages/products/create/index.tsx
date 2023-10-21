@@ -5,7 +5,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { AdminLayout } from "@layout";
+
 import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Pagination } from "@components/Pagination";
 import Multiselect from "multiselect-react-dropdown";
@@ -27,22 +27,22 @@ import { INSERT_PRODUCT } from "../../../../server/queries";
 import { Product } from "@models/models";
 
 function Products() {
-  let [setProduc] = useMutation(INSERT_PRODUCT);
+  let [insertProduct] = useMutation(INSERT_PRODUCT);
   const [validated, setValidated] = useState(false);
   const [categories, setCategories] = useState([""]);
   const [selectedCategories, setSelectedCategories] = useState([""]);
-  const [images, setImages] = useState<FileList>();
+  const [imagesFiles, setImagesFiles] = useState<FileList>();
   const [show, setShow] = useState(false);
   const { data: categories_data } = useQuery(GET_CATEGORIES);
-
   const [imagetURL, setImagetURL] = useState(Array<string>());
   const resetSelectedValues = useRef<Multiselect>(null);
+  
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const formValue = Array();
+
 
   useEffect(() => {
-    if (categories_data.categories) {
+    if (categories_data&&categories_data.categories) {
       console.log("categoriescategories");
       let aux = [""];
       console.log(categories_data.categories);
@@ -61,17 +61,17 @@ function Products() {
     if (form.checkValidity() === true) {
       // const imagesUrl = uploadImgToServer();
       const imagesUrl = await uploadImgToServer();
-      console.log("selectedCategories");
-      console.log(selectedCategories);
+      console.log("imagesUrl");
+      console.log(imagesUrl.uploads);
 
-      setProduc({
+      insertProduct({
         variables: {
           name: formData.get("name"),
           short_desc: formData.get("short_desc"),
           price: formData.get("price"),
           stock: formData.get("stock"),
           categories: selectedCategories,
-          images: imagesUrl.file,
+          images: imagesUrl.uploads,
         },
       }).then((result) => {
         console.log("resultresultresultresult");
@@ -91,26 +91,29 @@ function Products() {
   }
 
   const uploadImgToServer = async () => {
-    const body = new FormData();
-    console.log("file", images);
-    //s
+    const formData = new FormData();
+    console.log("file", imagesFiles);
 
-    Array.from(images ? images : []).forEach((file) => {
-      body.append("file", file);
+    Array.from(imagesFiles ? imagesFiles : []).forEach((file, index) => {
+      formData.append("image", file);
     });
-
+    console.log("bodyform", formData)
     const response = await fetch("../../api/upload", {
       method: "POST",
-      body,
+      body: formData,
     });
 
+    console.log(response)
     return response.json();
   };
 
-  const imagesHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setImages(event.target.files);
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+
+      setImagesFiles(event.target.files);
+
       let listFiles = Array<string>();
+
       Array.from(event.target.files).map((item) => {
         listFiles.push(URL.createObjectURL(item));
       });
@@ -120,7 +123,7 @@ function Products() {
   };
 
   return (
-    <AdminLayout>
+    <>
       <Form noValidate validated={validated} onSubmit={onSubmit}>
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Nome</Form.Label>
@@ -204,7 +207,7 @@ function Products() {
             type="file"
             multiple
             name="sm_pictures"
-            onChange={imagesHandler}
+            onChange={handleImageChange}
           />
           <Form.Control.Feedback type="invalid">
             <span>É necessário inserir ao menos uma imagem para o produto</span>
@@ -213,7 +216,7 @@ function Products() {
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Row className="align-items-center">
-            {imagetURL.length > 1
+            {imagetURL.length > 0
               ? imagetURL.map((image, index) => (
                   <Col md="auto" key={index}>
                     <Image height="100px" width="100px" src={image} rounded />
@@ -229,7 +232,6 @@ function Products() {
           </Button>
         </Form.Group>
       </Form>
-
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Criar nova categoria</Modal.Title>
@@ -250,7 +252,7 @@ function Products() {
           </Button>
         </Modal.Footer>
       </Modal>
-    </AdminLayout>
+    </>
   );
 }
 

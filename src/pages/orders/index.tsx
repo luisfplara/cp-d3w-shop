@@ -2,7 +2,7 @@ import { GetServerSideProps, NextPage } from 'next'
 import { Card } from 'react-bootstrap'
 import axios from 'axios'
 import React from 'react'
-import { AdminLayout } from '@layout'
+
 import { Pokemon } from '@models/pokemon'
 import { newResource, Resource } from '@models/resource'
 import { Pagination } from '@components/Pagination'
@@ -45,7 +45,7 @@ const Pokemons: NextPage<Props> = (props) => {
   })
 
   return (
-    <AdminLayout>
+    <>
       <Card>
         <Card.Header>Pokémon</Card.Header>
         <Card.Body>
@@ -54,7 +54,7 @@ const Pokemons: NextPage<Props> = (props) => {
           <Pagination meta={resource.meta} />
         </Card.Body>
       </Card>
-    </AdminLayout>
+    </>
   )
 }
 

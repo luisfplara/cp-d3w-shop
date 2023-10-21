@@ -1,62 +1,62 @@
-import { CButton } from '@coreui/react';
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { AdminLayout } from '@layout'
-import { useQuery } from '@apollo/react-hooks';
-import { Pagination } from '@components/Pagination'
-import { ProductList } from '@components/Product'
-import withApollo from '../../../server/apollo';
-import { GET_PRODUCTS3 } from '../../../server/queries';
-import { Card } from 'react-bootstrap'
-import { useApp } from "../../components/useApp";
-import { INSERT_PRODUCT } from '../../../server/queries';
-import { Product, ProductSchema } from '@models/models';
+import { CButton } from "@coreui/react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 
+import { useQuery } from "@apollo/react-hooks";
+import { Pagination } from "@components/Pagination";
+import { ProductList } from "@components/Product";
+import withApollo from "../../../server/apollo";
+import { GET_PRODUCTS3 } from "../../../server/queries";
+import { Card } from "react-bootstrap";
 
+import { INSERT_PRODUCT } from "../../../server/queries";
+import { Product, ProductSchema } from "@models/models";
 
 import * as Realm from "realm-web";
 import Link from "next/link";
-
-
+import { useRouter } from "next/router";
 
 function Products() {
-
   let { data, loading, error } = useQuery(GET_PRODUCTS3);
   //const [ products, setProducts ] = useState([]);
 
-  const [products, setProducts] = useState(Array<Product>)
-
-
+  const [products, setProducts] = useState<Product[]>();
 
   useEffect(() => {
     if (data) {
       console.log("aaaa");
       console.log(data);
       setProducts(data.products);
-      console.log("products");
-      console.log(products);
     }
-
-  }, [data])
+  }, [data]);
+  const router = useRouter();
+  console.log("products");
+  console.log(products);
   return (
-
-
-    <AdminLayout>
+    <>
       <Card>
         <Card.Header>
-          <CButton color="primary" size="lg" href='/products/create'>New</CButton>
+          <CButton
+            color="primary"
+            size="lg"
+            onClick={() => router.push("/products/create")}
+          >
+            New
+          </CButton>
         </Card.Header>
-        <Card.Body>
-          <ProductList products={products} />
-        </Card.Body>
+
+        {products ? (
+          <Card.Body>
+            <ProductList productData={products} />
+          </Card.Body>
+        ) : (
+          "loading"
+        )}
       </Card>
-    </AdminLayout>
-
-
-  )
+    </>
+  );
 }
 //  <PokemonList products={products} />
-export default withApollo({ ssr: typeof window == 'undefined' })(Products);
-
+export default withApollo({ ssr: typeof window == "undefined" })(Products);
 
 /*
 export const getServerSideProps: GetServerSideProps<Props> = async (context) => {
@@ -104,4 +104,3 @@ export const getServerSideProps: GetServerSideProps<Props> = async (context) => 
   }
 }
 */
-

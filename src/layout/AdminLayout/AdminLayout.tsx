@@ -19,11 +19,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     setIsShowSidebar(!isShowSidebar)
   }
 
-  const toggleIsShowSidebarMd = () => {
-    const newValue = !isShowSidebarMd
-    localStorage.setItem('isShowSidebarMd', newValue ? 'true' : 'false')
-    setIsShowSidebarMd(newValue)
-  }
 
   // Clear and reset sidebar
   const resetIsShowSidebar = () => {
@@ -56,7 +51,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
       <Sidebar isShow={isShowSidebar} isShowMd={isShowSidebarMd} />
 
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
-        <Header toggleSidebar={toggleIsShowSidebar} toggleSidebarMd={toggleIsShowSidebarMd} />
+        <Header toggleSidebar={toggleIsShowSidebar}/>
         <div className="body flex-grow-1 px-sm-2 mb-4">
           <Container fluid="lg">
             {children}

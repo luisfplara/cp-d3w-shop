@@ -6,16 +6,20 @@ import '@fortawesome/fontawesome-svg-core/styles.css'
 
 import { ProgressBar } from '@components/ProgressBar'
 
+import { AdminLayout } from '@layout'
+
 
 config.autoAddCss = false
 
 function MyApp({ Component, pageProps }: AppProps) {
 
   return (
-    <>
+   <AdminLayout>
       <ProgressBar />
       <Component {...pageProps} />
-    </>
+   </AdminLayout>
+
+
 
   )
 }
