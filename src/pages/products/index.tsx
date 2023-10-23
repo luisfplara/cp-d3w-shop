@@ -38,7 +38,7 @@ function Products() {
           <CButton
             color="primary"
             size="lg"
-            onClick={() => router.push("/products/create")}
+            onClick={() => router.push("/products/new")}
           >
             New
           </CButton>

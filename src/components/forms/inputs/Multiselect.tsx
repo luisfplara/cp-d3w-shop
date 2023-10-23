@@ -1,19 +1,22 @@
+import { Category } from "@models/models";
 import Multiselect from "multiselect-react-dropdown";
 import { Button, Col, Form, Row } from "react-bootstrap";
-import { List } from "realm";
+
 
 interface inputMultSelectProps {
   label: string;
-  list: string[];
+  list?: [Category];
   showModal?(): any;
   onChange(value: any): any;
+  defaultValue? : [Category]
 }
 
 export const InputMultSelect = ({
   label = "",
-  list = [],
+  list,
   showModal = () => {},
   onChange = () => {},
+  defaultValue
 }: inputMultSelectProps) => {
   return (
     <Form.Group controlId="formFileMultiple" className="mb-3">
@@ -22,8 +25,10 @@ export const InputMultSelect = ({
         <Col>
           <Multiselect
             placeholder={"Select"}
+            selectedValues={defaultValue}
+            displayValue="name" 
             options={list}
-            isObject={false}
+            isObject={true}
             onSelect={(selectedList) => {
               onChange(selectedList);
             }}

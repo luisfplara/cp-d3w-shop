@@ -1,17 +1,10 @@
 import { Col, Form, InputGroup, Row } from "react-bootstrap";
 
 interface inputPriceProps {
-  princeValue?: number;
-  onPrinceChange(value: any): any;
-  salePriceValue?: number;
-  onSalePrinceChange(value: any): any;
-}
-export const InputPrice = ({
-  princeValue = 0.0,
-  onPrinceChange = (value: any) => {},
-  salePriceValue = 0.0,
-  onSalePrinceChange = (value: any) => {},
-}: inputPriceProps) => {
+  defaultValueSalePrice?: number
+  defaultValuePrice?: number
+ }
+export const InputPrice = ({defaultValueSalePrice, defaultValuePrice}:inputPriceProps) => {
   return (
     <Form.Group controlId="formFileMultiple" className="mb-3">
       <Form.Label>Price</Form.Label>
@@ -22,8 +15,7 @@ export const InputPrice = ({
             <Form.Control
               required
               name="PriceInput"
-              value={princeValue}
-              onChange={(event) => onPrinceChange(event.currentTarget.value)}
+              defaultValue={defaultValuePrice}
             />
             <Form.Control.Feedback type="invalid">
               <span>É necessário inserir o valor produto</span>
@@ -35,8 +27,7 @@ export const InputPrice = ({
             <InputGroup.Text>Sale</InputGroup.Text>
             <Form.Control
               name="SalePriceInput"
-              value={salePriceValue}
-              onChange={(event) => onSalePrinceChange(event.currentTarget.value)}
+              defaultValue={defaultValueSalePrice}
             />
           </InputGroup>
         </Col>
