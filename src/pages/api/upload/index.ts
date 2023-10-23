@@ -21,20 +21,24 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const form = new Formidable();
   const data = await form.parse(req);
   const files = data[1];
+  console.log('console.log(data);console.log(data);');
+  console.log(files);
 
-  var response_images_url = { uploads: [Object({ url: String })], error: [Object()] };
-
-  if (files["image"]) {
-    for (var images of files["image"]) {
+  var response_images_url = [];
+  var response_error = [];
+  if (files["ImagesInput"]) {
+    for (var images of files["ImagesInput"]) {
+      console.log('imagesimagesimages');
+      console.log(images);
       try {
         const save_image = await cloudinary.uploader.upload(images.filepath);
-        response_images_url.uploads.push({ url: save_image.url });
+        response_images_url.push({ url: save_image.url });
       } catch (error: any) {
-        response_images_url.error.push(error);
+        response_error.push(error);
       }
     }
   }
-  res.status(200).send(response_images_url);
+  res.status(200).send({uploads: response_images_url,  error: response_error});
 };
 /*
 

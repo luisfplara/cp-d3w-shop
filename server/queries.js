@@ -72,10 +72,10 @@ export const GET_PRODUCTS3 = gql`
 `;
 export const GET_CATEGORIES = gql`
   query products {
-      categories {
-        _id
-        name
-      }
+    categories {
+      _id
+      name
+    }
   }
 `;
 export const GET_PRODUCTS = gql`
@@ -119,103 +119,41 @@ export const GET_PRODUCTS = gql`
 `;
 
 export const GET_PRODUCT = gql`
-    query product($slug: String!, $onlyData: Boolean = false) {
-        product(demo: ${process.env.NEXT_PUBLIC_DEMO}, slug: $slug, onlyData: $onlyData) {
-            single {
-                id
-                name
-                slug
-                price
-                sale_price
-                review
-                ratings
-                until
-                stock
-                top
-                featured
-                new
-                short_desc
-                category {
-                    name
-                    slug
-                }
-                brands {
-                    name
-                    slug
-                }
-                pictures {
-                    width
-                    height
-                    url
-                }
-                sm_pictures {
-                    width
-                    height
-                    url
-                }
-                variants {
-                    color
-                    color_name
-                    price
-                    size {
-                        name
-                    }
-                }
-            }
-
-            prev @skip(if: $onlyData) {
-                slug
-                name
-                sm_pictures {
-                    width
-                    height
-                    url
-                }
-            }
-
-            next @skip(if: $onlyData) {
-                slug
-                name
-                sm_pictures {
-                    width
-                    height
-                    url
-                }
-            }
-
-            related @skip(if: $onlyData) {
-                id
-                name
-                slug
-                price
-                sale_price
-                review
-                ratings
-                until
-                stock
-                top
-                featured
-                new
-                category {
-                    name
-                    slug
-                }
-                sm_pictures {
-                    width
-                    height
-                    url
-                }
-                variants {
-                    color
-                    color_name
-                    price
-                    size {
-                        name
-                    }
-                }
-            }
+    query product($id: ObjectId!) {
+        product(query: {_id: $id}) {
+      _id
+      name
+      slug
+      price
+      sale_price
+      review
+      ratings
+      until
+      stock
+      top
+      featured
+      new
+      short_desc
+      categories {
+        name
+        slug
+      }
+      sm_pictures {
+        width
+        height
+        url
+      }
+      variants {
+        color
+        color_name
+        price
+        size {
+          name
         }
+      }
     }
+        }
+    
 `;
 
 export const GET_ELEMENT_PRODUCTS = gql`

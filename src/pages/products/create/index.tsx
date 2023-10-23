@@ -36,13 +36,12 @@ function Products() {
   const { data: categories_data } = useQuery(GET_CATEGORIES);
   const [imagetURL, setImagetURL] = useState(Array<string>());
   const resetSelectedValues = useRef<Multiselect>(null);
-  
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-
   useEffect(() => {
-    if (categories_data&&categories_data.categories) {
+    if (categories_data && categories_data.categories) {
       console.log("categoriescategories");
       let aux = [""];
       console.log(categories_data.categories);
@@ -97,19 +96,18 @@ function Products() {
     Array.from(imagesFiles ? imagesFiles : []).forEach((file, index) => {
       formData.append("image", file);
     });
-    console.log("bodyform", formData)
+    console.log("bodyform", formData);
     const response = await fetch("../../api/upload", {
       method: "POST",
       body: formData,
     });
 
-    console.log(response)
+    console.log(response);
     return response.json();
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-
       setImagesFiles(event.target.files);
 
       let listFiles = Array<string>();

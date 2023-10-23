@@ -114,23 +114,14 @@ const ProductList = ({ productData }: Props) => {
         accessorFn: (row) => row.sm_pictures,
         Cell: ({ renderedCellValue, row, column, cell }) => {
           const categoriesArray = cell.getValue<[Media]>();
-          return categoriesArray.map((element: Media, index) => {
-            return <img
-            key ={index}
-            alt="product picture"
-
-            height={40}
-
-            src={element.url}
-
-            loading="lazy"
-
-           
-
-          />
-            
-          
-          });
+          return (
+            <img
+              alt="product picture"
+              height={40}
+              src={categoriesArray[0]?.url}
+              loading="lazy"
+            />
+          );
         },
       },
       {
