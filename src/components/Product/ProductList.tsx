@@ -25,75 +25,28 @@ import { Delete, Edit } from "@mui/icons-material";
 
 import { Category, Media, Product } from "@models/models";
 import { List } from "realm";
+import { useRouter } from "next/router";
 
 type Props = {
   productData: Product[];
 };
 
 const ProductList = ({ productData }: Props) => {
-  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [tableData, setTableData] = useState<Product[]>(() => productData);
-  const [validationErrors, setValidationErrors] = useState<{
-    [cellId: string]: string;
-  }>({});
 
-  const handleSaveRowEdits: MaterialReactTableProps<Product>["onEditingRowSave"] =
-    async ({ exitEditingMode, row, values }) => {
-      if (!Object.keys(validationErrors).length) {
-        tableData[row.index] = values;
-        //send/receive api updates here, then refetch or update local table data for re-render
-        setTableData([...tableData]);
-        exitEditingMode(); //required to exit editing mode and close modal
-      }
-    };
-
-  const handleCancelRowEdits = () => {
-    setValidationErrors({});
-  };
+  const router = useRouter();
 
   const handleDeleteRow = useCallback(
     (row: MRT_Row<Product>) => {
       if (!confirm(`Are you sure you want to delete ${row.getValue("name")}`)) {
         return;
       }
+
       //send api delete request here, then refetch or update local table data for re-render
-      setTableData(tableData.splice(row.index, 1));
+      // setTableData(tableData.splice(row.index, 1));
       //setTableData([...tableData]);
     },
     [tableData]
-  );
-
-  const getCommonEditTextFieldProps = useCallback(
-    (
-      cell: MRT_Cell<Product>
-    ): MRT_ColumnDef<Product>["muiTableBodyCellEditTextFieldProps"] => {
-      return {
-        error: !!validationErrors[cell.id],
-        helperText: validationErrors[cell.id],
-        onBlur: (event: { target: { value: string } }) => {
-          const isValid =
-            cell.column.id === "email"
-              ? validateEmail(event.target.value)
-              : cell.column.id === "age"
-              ? validateAge(+event.target.value)
-              : validateRequired(event.target.value);
-          if (!isValid) {
-            //set validation error for cell if invalid
-            setValidationErrors({
-              ...validationErrors,
-              [cell.id]: `${cell.column.columnDef.header} is required`,
-            });
-          } else {
-            //remove validation error for cell if valid
-            delete validationErrors[cell.id];
-            setValidationErrors({
-              ...validationErrors,
-            });
-          }
-        },
-      };
-    },
-    [validationErrors]
   );
 
   const columns = useMemo<MRT_ColumnDef<Product>[]>(
@@ -128,25 +81,16 @@ const ProductList = ({ productData }: Props) => {
         accessorKey: "name",
         header: "Name",
         size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
       },
       {
         accessorKey: "price",
         header: "Price",
         size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
       },
       {
         accessorKey: "stock",
         header: "Stock",
         size: 140,
-        muiTableBodyCellEditTextFieldProps: ({ cell }) => ({
-          ...getCommonEditTextFieldProps(cell),
-        }),
       },
       {
         //accessorFn used to join multiple data into a single cell
@@ -163,7 +107,7 @@ const ProductList = ({ productData }: Props) => {
         },
       },
     ],
-    [getCommonEditTextFieldProps]
+    []
   );
 
   return (
@@ -179,15 +123,16 @@ const ProductList = ({ productData }: Props) => {
         }}
         columns={columns}
         data={tableData}
-        editingMode="modal" //default
         enableColumnOrdering
         enableEditing
-        onEditingRowSave={handleSaveRowEdits}
-        onEditingRowCancel={handleCancelRowEdits}
         renderRowActions={({ row, table }) => (
           <Box sx={{ display: "flex", gap: "1rem" }}>
             <Tooltip arrow placement="left" title="Edit">
-              <IconButton onClick={() => table.setEditingRow(row)}>
+              <IconButton
+                onClick={() => {
+                  router.push(`/products/${row.original._id}`);
+                }}
+              >
                 <Edit />
               </IconButton>
             </Tooltip>
@@ -202,24 +147,5 @@ const ProductList = ({ productData }: Props) => {
     </>
   );
 };
-
-interface CreateModalProps {
-  columns: MRT_ColumnDef<Product>[];
-  onClose: () => void;
-  onSubmit: (values: Product) => void;
-  open: boolean;
-}
-
-const validateRequired = (value: string) => !!value.length;
-
-const validateEmail = (email: string) =>
-  !!email.length &&
-  email
-    .toLowerCase()
-    .match(
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    );
-
-const validateAge = (age: number) => age >= 18 && age <= 50;
 
 export default ProductList;

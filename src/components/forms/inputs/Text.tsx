@@ -1,16 +1,12 @@
 import { Form } from "react-bootstrap";
 
+
 interface inputTextProps {
-  label: string;
-  value: string|number | undefined;
-  onChange(value: any): any;
+ label: string
+ defaultValue?: string|number
 }
 
-export const InputText = ({
-  label = "",
-  value = "",
-  onChange = () => {},
-}: inputTextProps) => {
+export const InputText = ({label = "", defaultValue}:inputTextProps) => {
   return (
     <Form.Group controlId="formFileMultiple" className="mb-3">
       <Form.Label>{label}</Form.Label>
@@ -18,8 +14,7 @@ export const InputText = ({
         required
         type="text"
         name={`${label}Input`}
-        value={value}
-        onChange={(event) => onChange(event.currentTarget.value)}
+        defaultValue={defaultValue}
       />
       <Form.Control.Feedback type="invalid">
         <span>This field can't be empty</span>

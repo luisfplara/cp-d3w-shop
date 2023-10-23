@@ -111,18 +111,18 @@ export const PostTypeSchema = {
 export type Product = {
   _id: Realm.BSON.ObjectId;
   brands: Realm.List<Brand>;
-  categories: Realm.List<Category>;
+  categories: [Category];
   featured?: boolean;
   name: string;
   new?: boolean;
-  pictures: Realm.List<Media>;
+  images: [Media];
   price?: number;
   ratings?: number;
   review?: number;
   sale_price?: number;
   short_desc?: string;
   slug?: string;
-  sm_pictures: Realm.List<Media>;
+  sm_pictures: [Media];
   sold?: number;
   stock?: number;
   top?: boolean;
