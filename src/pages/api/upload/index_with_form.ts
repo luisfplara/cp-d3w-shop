@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { v2 as cloudinary } from "cloudinary";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Formidable } from "formidable";
+import { Fields, Files, Formidable } from "formidable";
 dotenv.config();
 
 cloudinary.config({
@@ -21,15 +21,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   const form = new Formidable();
   const data = await form.parse(req);
   const files = data[1];
-
-  console.log("console.log(data);console.log(data);");
+  console.log('console.log(data);console.log(data);');
   console.log(files);
 
   var response_images_url = [];
   var response_error = [];
-  if (files["image"]) {
-    for (var images of files["image"]) {
-      console.log("imagesimagesimages");
+  if (files["ImagesInput"]) {
+    for (var images of files["ImagesInput"]) {
+      console.log('imagesimagesimages');
       console.log(images);
       try {
         const save_image = await cloudinary.uploader.upload(images.filepath);
@@ -39,8 +38,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }
   }
-  console.log({ uploads: response_images_url, error: response_error });
-  res.status(200).send({ uploads: response_images_url, error: response_error });
+  res.status(200).send({uploads: response_images_url,  error: response_error});
 };
 /*
 

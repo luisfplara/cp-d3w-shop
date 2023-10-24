@@ -2,22 +2,24 @@ import { Category } from "@models/models";
 import Multiselect from "multiselect-react-dropdown";
 import { Button, Col, Form, Row } from "react-bootstrap";
 
-
 interface inputMultSelectProps {
   label: string;
   list?: [Category];
   showModal?(): any;
-  onChange(value: any): any;
-  defaultValue? : [Category]
+  setCategories(value: any): any;
+  defaultValue?: [Category];
 }
 
 export const InputMultSelect = ({
   label = "",
   list,
   showModal = () => {},
-  onChange = () => {},
-  defaultValue
+  setCategories,
+  defaultValue,
 }: inputMultSelectProps) => {
+
+  const handleCategories = (selectedList:any) => setCategories(selectedList);
+
   return (
     <Form.Group controlId="formFileMultiple" className="mb-3">
       <Form.Label>{label}</Form.Label>
@@ -26,15 +28,11 @@ export const InputMultSelect = ({
           <Multiselect
             placeholder={"Select"}
             selectedValues={defaultValue}
-            displayValue="name" 
+            displayValue="name"
             options={list}
             isObject={true}
-            onSelect={(selectedList) => {
-              onChange(selectedList);
-            }}
-            onRemove={(selectedList) => {
-              onChange(selectedList);
-            }}
+            onSelect={(selectedList) =>handleCategories(selectedList)}
+            onRemove={(selectedList) =>handleCategories(selectedList)}
           />
         </Col>
         <Col md="auto">

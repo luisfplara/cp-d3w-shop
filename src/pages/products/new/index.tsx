@@ -94,6 +94,9 @@ console.log(aux)
     const formData = new FormData(event.currentTarget);
     console.log(" console.log(formData); console.log(formData);");
     console.log(formData);
+
+    //{create: {image: {create: {url: "asda"}}, order: 2}
+
     if (form.checkValidity() === true) {
       const imagesUrl = await uploadImgToServer(formData);
 
@@ -150,7 +153,7 @@ console.log(aux)
           defaultValue = {product?.categories}
         />
 
-        <InputImages label="Images"  defaultValue = {product?.sm_pictures}/>
+        <InputImages label="Images"  defaultValue = {product?.images}/>
 
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Button variant="primary" type="submit">

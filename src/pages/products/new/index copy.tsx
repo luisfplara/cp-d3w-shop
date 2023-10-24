@@ -10,7 +10,7 @@ import { useLazyQuery, useMutation, useQuery } from "@apollo/react-hooks";
 import { Pagination } from "@components/Pagination";
 import Multiselect from "multiselect-react-dropdown";
 import withApollo from "../../../../server/apollo";
-import { GET_CATEGORIES, GET_PRODUCTS3 } from "../../../../server/queries";
+import { GET_CATEGORIES, GET_PRODUCTS } from "../../../../server/queries";
 import {
   Button,
   Card,

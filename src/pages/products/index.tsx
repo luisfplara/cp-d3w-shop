@@ -1,11 +1,11 @@
 import { CButton } from "@coreui/react";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 
-import { useQuery } from "@apollo/react-hooks";
+import { useMutation, useQuery } from "@apollo/react-hooks";
 import { Pagination } from "@components/Pagination";
 import { ProductList } from "@components/Product";
 import withApollo from "../../../server/apollo";
-import { GET_PRODUCTS3 } from "../../../server/queries";
+import { DELETE_PRODUCT, GET_PRODUCTS } from "../../../server/queries";
 import { Card } from "react-bootstrap";
 
 import { INSERT_PRODUCT } from "../../../server/queries";
@@ -16,9 +16,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 function Products() {
-  let { data, loading, error } = useQuery(GET_PRODUCTS3);
+  let { data, loading, error } = useQuery(GET_PRODUCTS);
   //const [ products, setProducts ] = useState([]);
-
+  const [deleteProduct] = useMutation(DELETE_PRODUCT);
   const [products, setProducts] = useState<Product[]>();
 
   useEffect(() => {
@@ -31,6 +31,9 @@ function Products() {
   const router = useRouter();
   console.log("products");
   console.log(products);
+
+  
+
   return (
     <>
       <Card>
@@ -46,7 +49,7 @@ function Products() {
 
         {products ? (
           <Card.Body>
-            <ProductList productData={products} />
+            <ProductList productData={products} deleteProduct={deleteProduct}/>
           </Card.Body>
         ) : (
           "loading"

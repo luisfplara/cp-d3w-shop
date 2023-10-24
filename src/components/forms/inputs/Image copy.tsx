@@ -1,8 +1,9 @@
-import { Media } from "@models/models";
+import { Media, ProductImage } from "@models/models";
 import { useEffect, useState } from "react";
 
-import SortableList, { SortableItem } from "react-easy-sort";
-import { arrayMoveImmutable } from "array-move";
+import SortableList, { SortableItem } from 'react-easy-sort'
+import { arrayMoveImmutable } from 'array-move'
+
 
 import {
   Col,
@@ -15,61 +16,62 @@ import {
 
 interface inputTexrProps {
   label: string;
-  defaultValue?: [Media];
-  onChangeImage?(value: any): any;
-  imagesList?: (Media | undefined)[];
-  required:boolean
+  defaultValue?: [{ image: Media; order: number }];
 }
 
-export const InputImages = ({
-  label = "",
-  defaultValue,
-  onChangeImage = () => {},
-  imagesList,
-  required
-}: inputTexrProps) => {
+export const InputImages = ({ label = "", defaultValue }: inputTexrProps) => {
+  //const [imagesFiles, setImagesFiles] = useState<FileList>();
+  const [images, setImages] = useState<(ProductImage | undefined)[]>();
 
   useEffect(() => {
-   
     if (defaultValue) {
-
       defaultValue.map((input) => {
-        onChangeImage((prevImages: [Media]) =>
+        setImages((prevImages) =>
           prevImages
-            ? [...prevImages, { url: input.url }]
-            : [{ url: input.url }]
+            ? [...prevImages, { image: input.image, order: input.order }]
+            : [{ image: input.image, order: input.order }]
         );
       });
     }
   }, [defaultValue]);
-
+  //, {url:URL.createObjectURL(item), order:index}
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    onChangeImage([]);
     if (event.target.files) {
       Array.from(event.target.files).map((item, index) => {
-        onChangeImage((prevImages: [Media]) =>
+        const media: Media = {
+          _id: "local",
+          url: URL.createObjectURL(item),
+          local: true,
+        };
+
+        setImages((prevImages) =>
           prevImages
-            ? [...prevImages, { file: item, url: URL.createObjectURL(item) }]
-            : [{ file: item, url: URL.createObjectURL(item) }]
+            ? [...prevImages, { image: media, order: index }]
+            : [{ image: media, order: index }]
         );
       });
 
+      // setImages(listFiles);
     }
   };
+  //          name={`${label}Input`}
+
+  const [items, setItems] = useState(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'])
 
   const onSortEnd = (oldIndex: number, newIndex: number) => {
-    onChangeImage((array: any) =>
-      arrayMoveImmutable(array, oldIndex, newIndex)
-    );
-  };
-  //name={`${label}Input`}
+    setItems((array) => arrayMoveImmutable(array, oldIndex, newIndex))
+  }
+
+
   return (
+
     <Col>
       <Form.Group controlId="formFileMultiple" className="mb-3">
         <Form.Label>{label}</Form.Label>
         <Form.Control
-          required={required}
+          required
           type="file"
+          name={`${label}Input`}
           multiple
           onChange={handleImageChange}
         />
@@ -79,38 +81,51 @@ export const InputImages = ({
       </Form.Group>
 
       <Form.Group controlId="formFileMultiple" className="mb-3">
-        <SortableList
-          onSortEnd={onSortEnd}
-          className="list"
-          draggedItemClassName="dragged"
-          style={{
-            userSelect: "none",
-            display: "flex",
-            justifyContent: "flex-start",
-          }}
-        >
-          {imagesList
-            ? imagesList.map((item, index) => (
-                <SortableItem key={index}>
+        <Row className="align-items-center">
+          {images
+            ? images.map((productImage, index) => (
+                <Col md="auto" key={index}>
                   <Image
                     height="100px"
                     width="100px"
-                    src={item?.url}
+                    src={productImage?.image.url}
                     rounded
-                    draggable={false}
                   />
-                </SortableItem>
+                  <div className="d-flex align-items-center justify-content-center">
+                    <DropdownButton
+                      className="align-items-center justify-content-center"
+                      variant="outline-secondary"
+                      title="Order"
+                      id="input-group-dropdown-1"
+                    >
+                      <Dropdown.Item>1</Dropdown.Item>
+                      <Dropdown.Item>2</Dropdown.Item>
+                    </DropdownButton>
+                  </div>
+                  
+                </Col>
               ))
             : ""}
-        </SortableList>
+        </Row>
       </Form.Group>
     </Col>
-  );
+  )
 };
+
+
 
 /*
 
 
+    <SortableList onSortEnd={onSortEnd} className="list" style={{userSelect:"none", display:"flex", justifyContent:"flex-start"}} draggedItemClassName="dragged">
+      {items.map((item) => (
+        <SortableItem key={item}>
+
+          <div className="item">{item}</div>
+          
+        </SortableItem>
+      ))}
+    </SortableList>
 <Col>
       <Form.Group controlId="formFileMultiple" className="mb-3">
         <Form.Label>{label}</Form.Label>
