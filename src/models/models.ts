@@ -49,11 +49,14 @@ export const CategorySchema = {
 };
 
 export type Media = {
-  _id: Realm.BSON.ObjectId;
+  _id: Realm.BSON.ObjectId|string;
   height?: number;
+  file?: File;
   url?: string;
   width?: number;
+  local: boolean 
 };
+
 
 export const MediaSchema = {
   name: 'Media',
@@ -108,6 +111,7 @@ export const PostTypeSchema = {
   primaryKey: '_id',
 };
 
+
 export type Product = {
   _id: Realm.BSON.ObjectId;
   brands: Realm.List<Brand>;
@@ -120,9 +124,7 @@ export type Product = {
   ratings?: number;
   review?: number;
   sale_price?: number;
-  short_desc?: string;
-  slug?: string;
-  sm_pictures: [Media];
+  description?: string;
   sold?: number;
   stock?: number;
   top?: boolean;

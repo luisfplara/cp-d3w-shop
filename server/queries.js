@@ -4,42 +4,77 @@ import gql from "graphql-tag";
 export const INSERT_PRODUCT = gql`
   mutation INSERT_PRODUCT(
     $name: String!
-    $short_desc: String!
+    $description: String!
     $price: Float!
     $stock: Int!
-    $categories: [String]!
+    $categories: [ObjectId]!
     $images: [MediumInsertInput]
   ) {
     insertOneProduct(
       data: {
         name: $name
-        short_desc: $short_desc
+        description: $description
         price: $price
         stock: $stock
         categories: { link: $categories }
-        sm_pictures: { create: $images }
+        images: { create: $images }
       }
     ) {
       _id
       name
-      short_desc
+      description
       price
       stock
       categories {
         name
       }
-      sm_pictures {
+      images {
         url
       }
     }
   }
 `;
-export const GET_PRODUCTS3 = gql`
+export const UPDATE_PRODUCT = gql`
+  mutation UPDATE_PRODUCT(
+    $_id: ObjectId!
+    $name: String
+    $description: String
+    $price: Float
+    $stock: Int
+    $categories: [ObjectId]
+    $images: [MediumInsertInput]
+  ) {
+    updateOneProduct(
+      query: { _id: $_id }
+      set: {
+        name: $name
+        description: $description
+        price: $price
+        stock: $stock
+        categories: { link: $categories }
+        images: { create: $images }
+      }
+    ) {
+      _id
+      name
+      description
+      price
+      stock
+      categories {
+        name
+      }
+      images {
+        url
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCTS = gql`
   query products {
     products {
       _id
       name
-      slug
       price
       sale_price
       review
@@ -49,14 +84,13 @@ export const GET_PRODUCTS3 = gql`
       top
       featured
       new
-      short_desc
+      description
       categories {
+        _id
         name
         slug
       }
-      sm_pictures {
-        width
-        height
+      images {
         url
       }
       variants {
@@ -70,6 +104,59 @@ export const GET_PRODUCTS3 = gql`
     }
   }
 `;
+
+export const GET_PRODUCT = gql`
+  query product($id: ObjectId!) {
+    product(query: { _id: $id }) {
+      _id
+      name
+
+      price
+      sale_price
+      review
+      ratings
+      until
+      stock
+      top
+      featured
+      new
+      description
+      categories {
+        _id
+        name
+        slug
+      }
+      images {
+        url
+      }
+      variants {
+        color
+        color_name
+        price
+        size {
+          name
+        }
+      }
+    }
+  }
+`;
+
+export const DELETE_PRODUCT = gql`
+  mutation DELETE_PRODUCT($_id: ObjectId!) {
+    deleteOneProduct(query: { _id: $_id }) {
+      _id
+    }
+  }
+`;
+
+export const product = {
+  INSERT_PRODUCT,
+  GET_PRODUCT,
+  GET_PRODUCTS,
+  DELETE_PRODUCT,
+  UPDATE_PRODUCT,
+};
+
 export const GET_CATEGORIES = gql`
   query products {
     categories {
@@ -77,83 +164,6 @@ export const GET_CATEGORIES = gql`
       name
     }
   }
-`;
-export const GET_PRODUCTS = gql`
-    query products($searchTerm: String, $color: [String], $size: [String], $brand: [String], $minPrice: Int, $maxPrice: Int, $category: String, $rating: [String], $sortBy: String, $page: Int = 1, $perPage: Int, $list: Boolean = false, $from: Int = 0) {
-        products(demo: ${process.env.NEXT_PUBLIC_DEMO}, searchTerm: $searchTerm, color: $color, size: $size, brand: $brand, minPrice: $minPrice, maxPrice: $maxPrice, category: $category, rating: $rating, sortBy: $sortBy, page: $page, perPage: $perPage, list: $list, from: $from) {
-            data {
-                id
-                name
-                slug
-                price
-                sale_price
-                review
-                ratings
-                until
-                stock
-                top
-                featured
-                new
-                short_desc @include(if: $list)
-                category {
-                    name
-                    slug
-                }
-                sm_pictures {
-                    width
-                    height
-                    url
-                }
-                variants {
-                    color
-                    color_name
-                    price
-                    size {
-                        name
-                    }
-                }
-            }
-            totalCount
-        }
-    }
-`;
-
-export const GET_PRODUCT = gql`
-    query product($id: ObjectId!) {
-        product(query: {_id: $id}) {
-      _id
-      name
-      slug
-      price
-      sale_price
-      review
-      ratings
-      until
-      stock
-      top
-      featured
-      new
-      short_desc
-      categories {
-        name
-        slug
-      }
-      sm_pictures {
-        width
-        height
-        url
-      }
-      variants {
-        color
-        color_name
-        price
-        size {
-          name
-        }
-      }
-    }
-        }
-    
 `;
 
 export const GET_ELEMENT_PRODUCTS = gql`

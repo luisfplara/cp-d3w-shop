@@ -29,9 +29,10 @@ import { useRouter } from "next/router";
 
 type Props = {
   productData: Product[];
+  deleteProduct(value:any):any
 };
 
-const ProductList = ({ productData }: Props) => {
+const ProductList = ({ productData, deleteProduct}: Props) => {
   const [tableData, setTableData] = useState<Product[]>(() => productData);
 
   const router = useRouter();
@@ -41,7 +42,13 @@ const ProductList = ({ productData }: Props) => {
       if (!confirm(`Are you sure you want to delete ${row.getValue("name")}`)) {
         return;
       }
-
+      deleteProduct({
+        variables: {
+          _id: row.getValue("_id"),
+        },
+      }).then((result: any) => {
+        router.reload();
+      });
       //send api delete request here, then refetch or update local table data for re-render
       // setTableData(tableData.splice(row.index, 1));
       //setTableData([...tableData]);
@@ -61,15 +68,15 @@ const ProductList = ({ productData }: Props) => {
       },
       {
         //accessorFn used to join multiple data into a single cell
-        id: "sm_pictures", //id is still required when using accessorFn instead of accessorKey
-        header: "Categories",
+        id: "images", //id is still required when using accessorFn instead of accessorKey
+        header: "Image",
         size: 250,
-        accessorFn: (row) => row.sm_pictures,
-        Cell: ({ renderedCellValue, row, column, cell }) => {
+        accessorFn: (row) => row.images,
+        Cell: ({cell }) => {
           const categoriesArray = cell.getValue<[Media]>();
           return (
             <img
-              alt="product picture"
+              alt="product image"
               height={40}
               src={categoriesArray[0]?.url}
               loading="lazy"
