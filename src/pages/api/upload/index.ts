@@ -25,7 +25,23 @@ const uploadImg = async (req: NextApiRequest, res: NextApiResponse) => {
   const responseImagesUrl: { url: string }[] = []
   const responseError: unknown[] = []
 
-  files?.image?.map(async (images) => {
+  console.log("filesfiles", files)
+
+  if (files.image) {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const images of files.image) {
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const saveImage = await cloudinary.uploader.upload(images.filepath)
+        responseImagesUrl.push({ url: saveImage.url })
+      } catch (error: unknown) {
+        responseError.push(error)
+      }
+    }
+  }
+  /* 
+
+  files.image?.map(async (images) => {
     try {
       const saveImage = await cloudinary.uploader.upload(images.filepath)
       responseImagesUrl.push({ url: saveImage.url })
@@ -33,18 +49,8 @@ const uploadImg = async (req: NextApiRequest, res: NextApiResponse) => {
       responseError.push(error)
     }
   })
-
-  /* 
-  if (files.image) {
-    for (const images of files.image) {
-      try {
-        const save_image = await cloudinary.uploader.upload(images.filepath)
-        responseImagesUrl.push({ url: save_image.url })
-      } catch (error: any) {
-        responseError.push(error)
-      }
-    } 
-  } */
+  
+  */
 
   res.status(200).send({ uploads: responseImagesUrl, error: responseError })
 }

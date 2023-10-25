@@ -1,5 +1,5 @@
-import { GraphQLString } from "graphql";
-import gql from "graphql-tag";
+import { GraphQLString } from "graphql"
+import gql from "graphql-tag"
 
 export const INSERT_PRODUCT = gql`
   mutation INSERT_PRODUCT(
@@ -33,7 +33,7 @@ export const INSERT_PRODUCT = gql`
       }
     }
   }
-`;
+`
 export const UPDATE_PRODUCT = gql`
   mutation UPDATE_PRODUCT(
     $_id: ObjectId!
@@ -68,7 +68,7 @@ export const UPDATE_PRODUCT = gql`
       }
     }
   }
-`;
+`
 
 export const GET_PRODUCTS = gql`
   query products {
@@ -103,7 +103,7 @@ export const GET_PRODUCTS = gql`
       }
     }
   }
-`;
+`
 
 export const GET_PRODUCT = gql`
   query product($id: ObjectId!) {
@@ -139,7 +139,7 @@ export const GET_PRODUCT = gql`
       }
     }
   }
-`;
+`
 
 export const DELETE_PRODUCT = gql`
   mutation DELETE_PRODUCT($_id: ObjectId!) {
@@ -147,7 +147,7 @@ export const DELETE_PRODUCT = gql`
       _id
     }
   }
-`;
+`
 
 export const product = {
   INSERT_PRODUCT,
@@ -155,7 +155,7 @@ export const product = {
   GET_PRODUCTS,
   DELETE_PRODUCT,
   UPDATE_PRODUCT,
-};
+}
 
 export const GET_CATEGORIES = gql`
   query products {
@@ -164,7 +164,7 @@ export const GET_CATEGORIES = gql`
       name
     }
   }
-`;
+`
 
 export const GET_ELEMENT_PRODUCTS = gql`
   query elementProducts {
@@ -200,7 +200,7 @@ export const GET_ELEMENT_PRODUCTS = gql`
       }
     }
   }
-`;
+`
 
 export const GET_ELEMENT_POSTS = gql`
   query elementPosts {
@@ -224,7 +224,7 @@ export const GET_ELEMENT_POSTS = gql`
       }
     }
   }
-`;
+`
 
 export const GET_POSTS_BY_PAGE = gql`
   query postsByPage($page: String!, $category: String) {
@@ -256,7 +256,7 @@ export const GET_POSTS_BY_PAGE = gql`
       }
     }
   }
-`;
+`
 
 export const GET_POST = gql`
   query post($slug: String!) {
@@ -320,7 +320,7 @@ export const GET_POST = gql`
       }
     }
   }
-`;
+`
 
 export const GET_HOME_DATA = gql`
   query {
@@ -413,4 +413,4 @@ export const GET_HOME_DATA = gql`
       }
     }
   }
-`;
+`

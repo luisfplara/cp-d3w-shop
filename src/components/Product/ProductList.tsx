@@ -61,8 +61,9 @@ const ProductList = ({ productData, deleteProduct }: Props) => {
           return (
             <Image
               alt="product image"
+              width={40}
               height={40}
-              src={categoriesArray[0].url ? categoriesArray[0].url : ""}
+              src={categoriesArray[0]?.url ? categoriesArray[0].url : ""}
               loading="lazy"
             />
           )

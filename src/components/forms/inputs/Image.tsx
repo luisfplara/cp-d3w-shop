@@ -78,9 +78,9 @@ const InputImages = ({
           }}
         >
           {imagesList
-            ? imagesList.map((item) => (
-                // eslint-disable-next-line no-underscore-dangle
-                <SortableItem key={String(item?._id)}>
+            ? imagesList.map((item, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <SortableItem key={String(index)}>
                   <Image
                     alt={item?.url}
                     height="100px"

@@ -58,7 +58,9 @@ function Products() {
   const uploadImgToServer = async () => {
     const fileFormDataOrdened = new FormData()
 
-    images?.forEach((file) => {
+    console.log("images", images)
+
+    images.forEach((file) => {
       if (file) if (file.file) fileFormDataOrdened.append("image", file.file)
     })
 
@@ -77,7 +79,7 @@ function Products() {
 
     if (form.checkValidity() === true) {
       const imagesUrl = await uploadImgToServer()
-
+      console.log("imagesUrl", imagesUrl)
       insertProduct({
         variables: {
           name: formData.get("NameInput"),
@@ -104,6 +106,7 @@ function Products() {
 
     if (form.checkValidity() === true) {
       const imagesUrl = await uploadImgToServer()
+      console.log("imagesUrl", imagesUrl)
 
       updateProduct({
         variables: {
@@ -116,23 +119,14 @@ function Products() {
           categories: productCategories?.map((obj) => obj?._id),
           images: imagesUrl.uploads ? imagesUrl.uploads : product?.images
         }
+      }).then((result) => {
+        console.log(result)
+        setValidated(false)
+        form.reset()
       })
-        .then((result) => {
-          console.log("result")
-          console.log(result)
-          setValidated(false)
-          form.reset()
-        })
-        .catch((err) => {
-          console.log(" console.log(err)console.log(err)")
-          console.log(err)
-        })
     }
     setValidated(true)
   }
-
-  console.log("images", images)
-  console.log(typeof window === "undefined")
 
   return (
     <>
