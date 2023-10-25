@@ -1,24 +1,24 @@
-import { Category } from "@models/models";
-import Multiselect from "multiselect-react-dropdown";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Category } from "@models/models"
+import Multiselect from "multiselect-react-dropdown"
+import { Button, Col, Form, Row } from "react-bootstrap"
 
-interface inputMultSelectProps {
-  label: string;
-  list?: [Category];
-  showModal?(): any;
-  setCategories(value: any): any;
-  defaultValue?: [Category];
+interface InputMultSelectProps {
+  label: string
+  list?: [Category]
+  showModal?(): void
+  setCategories(prevState: (Category | undefined)[]): void
+  defaultValue?: [Category]
 }
 
-export const InputMultSelect = ({
+const InputMultSelect = ({
   label = "",
   list,
   showModal = () => {},
   setCategories,
-  defaultValue,
-}: inputMultSelectProps) => {
-
-  const handleCategories = (selectedList:any) => setCategories(selectedList);
+  defaultValue
+}: InputMultSelectProps) => {
+  const handleCategories = (selectedList: (Category | undefined)[]) =>
+    setCategories(selectedList)
 
   return (
     <Form.Group controlId="formFileMultiple" className="mb-3">
@@ -26,13 +26,13 @@ export const InputMultSelect = ({
       <Row>
         <Col>
           <Multiselect
-            placeholder={"Select"}
+            placeholder="Select"
             selectedValues={defaultValue}
             displayValue="name"
             options={list}
-            isObject={true}
-            onSelect={(selectedList) =>handleCategories(selectedList)}
-            onRemove={(selectedList) =>handleCategories(selectedList)}
+            isObject
+            onSelect={(selectedList) => handleCategories(selectedList)}
+            onRemove={(selectedList) => handleCategories(selectedList)}
           />
         </Col>
         <Col md="auto">
@@ -46,5 +46,7 @@ export const InputMultSelect = ({
         </Col>
       </Row>
     </Form.Group>
-  );
-};
+  )
+}
+
+export default InputMultSelect

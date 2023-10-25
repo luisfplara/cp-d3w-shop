@@ -1,193 +1,190 @@
-import Realm from "realm";
+import Realm from "realm"
 
 export type BlogCategory = {
-  _id: Realm.BSON.ObjectId;
-  count?: number;
-  name?: string;
-  slug?: string;
-};
+  _id: Realm.BSON.ObjectId
+  count?: number
+  name?: string
+  slug?: string
+}
 
 export const BlogCategorySchema = {
-  name: 'BlogCategory',
+  name: "BlogCategory",
   properties: {
-    _id: 'objectId',
-    count: 'int?',
-    name: 'string?',
-    slug: 'string?',
+    _id: "objectId",
+    count: "int?",
+    name: "string?",
+    slug: "string?",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Brand = {
-  _id: Realm.BSON.ObjectId;
-  name: string;
-};
+  _id: Realm.BSON.ObjectId
+  name: string
+}
 
 export const BrandSchema = {
-  name: 'Brand',
+  name: "Brand",
   properties: {
-    _id: 'objectId',
-    name: 'string',
+    _id: "objectId",
+    name: "string",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Category = {
-  _id: Realm.BSON.ObjectId;
-  name?: string;
-  slug?: string;
-};
+  _id: Realm.BSON.ObjectId
+  name?: string
+  slug?: string
+}
 
 export const CategorySchema = {
-  name: 'Category',
+  name: "Category",
   properties: {
-    _id: 'objectId',
-    name: 'string?',
-    slug: 'string?',
+    _id: "objectId",
+    name: "string?",
+    slug: "string?",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Media = {
-  _id: Realm.BSON.ObjectId|string;
-  height?: number;
-  file?: File;
-  url?: string;
-  width?: number;
-  local: boolean 
-};
-
+  _id?: Realm.BSON.ObjectId | string
+  height?: number
+  url?: string
+  width?: number
+  file?: File
+}
 
 export const MediaSchema = {
-  name: 'Media',
+  name: "Media",
   properties: {
-    _id: 'objectId',
-    height: 'int?',
-    url: 'string?',
-    width: 'int?',
+    _id: "objectId",
+    height: "int?",
+    url: "string?",
+    width: "int?",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Post = {
-  _id: Realm.BSON.ObjectId;
-  author?: string;
-  blog_categories: Realm.List<Category>;
-  comments?: number;
-  content?: string;
-  date?: Date;
-  image: Realm.List<Media>;
-  slug?: string;
-  tittle?: string;
-};
+  _id: Realm.BSON.ObjectId
+  author?: string
+  blog_categories: Realm.List<Category>
+  comments?: number
+  content?: string
+  date?: Date
+  image: Realm.List<Media>
+  slug?: string
+  tittle?: string
+}
 
 export const PostSchema = {
-  name: 'Post',
+  name: "Post",
   properties: {
-    _id: 'objectId',
-    author: 'string?',
-    blog_categories: 'Category[]',
-    comments: 'int?',
-    content: 'string?',
-    date: 'date?',
-    image: 'Media[]',
-    slug: 'string?',
-    tittle: 'string?',
+    _id: "objectId",
+    author: "string?",
+    blog_categories: "Category[]",
+    comments: "int?",
+    content: "string?",
+    date: "date?",
+    image: "Media[]",
+    slug: "string?",
+    tittle: "string?",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type PostType = {
-  _id: Realm.BSON.ObjectId;
-  name: string;
-};
+  _id: Realm.BSON.ObjectId
+  name: string
+}
 
 export const PostTypeSchema = {
-  name: 'PostType',
+  name: "PostType",
   properties: {
-    _id: 'objectId',
-    name: 'string',
+    _id: "objectId",
+    name: "string",
   },
-  primaryKey: '_id',
-};
-
+  primaryKey: "_id",
+}
 
 export type Product = {
-  _id: Realm.BSON.ObjectId;
-  brands: Realm.List<Brand>;
-  categories: [Category];
-  featured?: boolean;
-  name: string;
-  new?: boolean;
-  images: [Media];
-  price?: number;
-  ratings?: number;
-  review?: number;
-  sale_price?: number;
-  description?: string;
-  sold?: number;
-  stock?: number;
-  top?: boolean;
-  until?: string;
-  variants: Realm.List<Variant>;
-};
+  _id: Realm.BSON.ObjectId
+  brands: Realm.List<Brand>
+  categories: [Category]
+  featured?: boolean
+  name: string
+  new?: boolean
+  images: [Media]
+  price?: number
+  ratings?: number
+  review?: number
+  sale_price?: number
+  description?: string
+  sold?: number
+  stock?: number
+  top?: boolean
+  until?: string
+  variants: Realm.List<Variant>
+}
 
 export const ProductSchema = {
-  name: 'Product',
+  name: "Product",
   properties: {
-    _id: 'objectId',
-    brands: 'Brand[]',
-    categories: 'Category[]',
-    featured: 'bool?',
-    name: 'string',
-    new: 'bool?',
-    pictures: 'Media[]',
-    price: 'double?',
-    ratings: 'double?',
-    review: 'int?',
-    sale_price: 'double?',
-    short_desc: 'string?',
-    slug: 'string?',
-    sm_pictures: 'Media[]',
-    sold: 'int?',
-    stock: 'int?',
-    top: 'bool?',
-    until: 'string?',
-    variants: 'Variant[]',
+    _id: "objectId",
+    brands: "Brand[]",
+    categories: "Category[]",
+    featured: "bool?",
+    name: "string",
+    new: "bool?",
+    pictures: "Media[]",
+    price: "double?",
+    ratings: "double?",
+    review: "int?",
+    sale_price: "double?",
+    short_desc: "string?",
+    slug: "string?",
+    sm_pictures: "Media[]",
+    sold: "int?",
+    stock: "int?",
+    top: "bool?",
+    until: "string?",
+    variants: "Variant[]",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Size = {
-  _id: Realm.BSON.ObjectId;
-  name: string;
-};
+  _id: Realm.BSON.ObjectId
+  name: string
+}
 
 export const SizeSchema = {
-  name: 'Size',
+  name: "Size",
   properties: {
-    _id: 'objectId',
-    name: 'string',
+    _id: "objectId",
+    name: "string",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}
 
 export type Variant = {
-  _id: Realm.BSON.ObjectId;
-  color?: string;
-  color_name?: string;
-  price?: number;
-  size: Realm.List<Size>;
-};
+  _id: Realm.BSON.ObjectId
+  color?: string
+  color_name?: string
+  price?: number
+  size: Realm.List<Size>
+}
 
 export const VariantSchema = {
-  name: 'Variant',
+  name: "Variant",
   properties: {
-    _id: 'objectId',
-    color: 'string?',
-    color_name: 'string?',
-    price: 'double?',
-    size: 'Size[]',
+    _id: "objectId",
+    color: "string?",
+    color_name: "string?",
+    price: "double?",
+    size: "Size[]",
   },
-  primaryKey: '_id',
-};
+  primaryKey: "_id",
+}

@@ -1,15 +1,12 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
-import Link from 'next/link'
-import { Button, Container } from 'react-bootstrap'
-
-import HeaderFeaturedNav from '@layout/AdminLayout/Header/HeaderFeaturedNav'
-import HeaderNotificationNav from '@layout/AdminLayout/Header/HeaderNotificationNav'
-import HeaderProfileNav from '@layout/AdminLayout/Header/HeaderProfileNav'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBars } from "@fortawesome/free-solid-svg-icons"
+import Link from "next/link"
+import { Button, Container } from "react-bootstrap"
+import HeaderNotificationNav from "@layout/AdminLayout/Header/HeaderNotificationNav"
+import HeaderProfileNav from "@layout/AdminLayout/Header/HeaderProfileNav"
 
 type HeaderProps = {
-  toggleSidebar: () => void;
-
+  toggleSidebar: () => void
 }
 
 export default function Header(props: HeaderProps) {
@@ -24,18 +21,16 @@ export default function Header(props: HeaderProps) {
           type="button"
           onClick={toggleSidebar}
         >
-
           <FontAwesomeIcon icon={faBars} />
         </Button>
 
         <Link href="/" className="header-brand d-md-none">
-        
           <svg width="80" height="46">
             <title>Control Panel</title>
             <use xlinkHref="/assets/brand/coreui.svg#full" />
           </svg>
         </Link>
-  
+
         <div className="header-nav ms-auto">
           <HeaderNotificationNav />
         </div>
@@ -43,7 +38,6 @@ export default function Header(props: HeaderProps) {
           <HeaderProfileNav />
         </div>
       </Container>
-
     </header>
   )
 }

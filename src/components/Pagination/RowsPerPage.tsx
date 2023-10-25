@@ -1,10 +1,10 @@
-import { Form } from 'react-bootstrap'
-import React from 'react'
-import { useRouter } from 'next/router'
+import { Form } from "react-bootstrap"
+import React from "react"
+import { useRouter } from "next/router"
 
 type Props = {
-  perPage: number;
-  setPerPage?: (perPage: number) => void;
+  perPage: number
+  setPerPage?: (perPage: number) => void
 }
 
 export default function RowsPerPage(props: Props) {
@@ -13,8 +13,7 @@ export default function RowsPerPage(props: Props) {
 
   return (
     <div className="col-auto ms-sm-auto mb-3">
-      Rows per page:
-      {' '}
+      Rows per page:{" "}
       <Form.Select
         defaultValue={perPage}
         className="d-inline-block w-auto"
@@ -29,8 +28,8 @@ export default function RowsPerPage(props: Props) {
             query: {
               ...router.query,
               page: 1, // Go back to first page
-              per_page: event.target.value,
-            },
+              per_page: event.target.value
+            }
           })
         }}
       >

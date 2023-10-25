@@ -1,60 +1,44 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react"
 import {
   MaterialReactTable,
-  type MaterialReactTableProps,
-  type MRT_Cell,
   type MRT_ColumnDef,
-  type MRT_Row,
-} from "material-react-table";
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  MenuItem,
-  Stack,
-  TextField,
-  TextFieldProps,
-  Tooltip,
-} from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+  type MRT_Row
+} from "material-react-table"
+import { Box, Chip, IconButton, Tooltip } from "@mui/material"
+import { Delete, Edit } from "@mui/icons-material"
+import { Category, Media, Product } from "@models/models"
+import { useRouter } from "next/router"
+import Image from "next/image"
 
-import { Category, Media, Product } from "@models/models";
-import { List } from "realm";
-import { useRouter } from "next/router";
+interface Props {
+  productData: Product[]
+  deleteProduct(value: {
+    variables: {
+      _id: string
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  }): any
+}
 
-type Props = {
-  productData: Product[];
-  deleteProduct(value:any):any
-};
-
-const ProductList = ({ productData, deleteProduct}: Props) => {
-  const [tableData, setTableData] = useState<Product[]>(() => productData);
-
-  const router = useRouter();
+const ProductList = ({ productData, deleteProduct }: Props) => {
+  const router = useRouter()
 
   const handleDeleteRow = useCallback(
     (row: MRT_Row<Product>) => {
+      // eslint-disable-next-line no-alert, no-restricted-globals
       if (!confirm(`Are you sure you want to delete ${row.getValue("name")}`)) {
-        return;
+        return
       }
       deleteProduct({
         variables: {
-          _id: row.getValue("_id"),
-        },
-      }).then((result: any) => {
-        router.reload();
-      });
-      //send api delete request here, then refetch or update local table data for re-render
-      // setTableData(tableData.splice(row.index, 1));
-      //setTableData([...tableData]);
+          _id: row.getValue("_id")
+        }
+      }).then(() => {
+        router.reload()
+      })
     },
-    [tableData]
-  );
+    [productData]
+  )
 
   const columns = useMemo<MRT_ColumnDef<Product>[]>(
     () => [
@@ -62,97 +46,96 @@ const ProductList = ({ productData, deleteProduct}: Props) => {
         accessorKey: "_id",
         header: "ID",
         enableColumnOrdering: false,
-        enableEditing: false, //disable editing on this column
+        enableEditing: false,
         enableSorting: false,
-        size: 80,
+        size: 80
       },
       {
-        //accessorFn used to join multiple data into a single cell
-        id: "images", //id is still required when using accessorFn instead of accessorKey
+        id: "images",
         header: "Image",
         size: 250,
         accessorFn: (row) => row.images,
-        Cell: ({cell }) => {
-          const categoriesArray = cell.getValue<[Media]>();
+        // eslint-disable-next-line react/no-unstable-nested-components
+        Cell: ({ cell }) => {
+          const categoriesArray = cell.getValue<[Media]>()
           return (
-            <img
+            <Image
               alt="product image"
               height={40}
-              src={categoriesArray[0]?.url}
+              src={categoriesArray[0].url ? categoriesArray[0].url : ""}
               loading="lazy"
             />
-          );
-        },
+          )
+        }
       },
       {
         accessorKey: "name",
         header: "Name",
-        size: 140,
+        size: 140
       },
       {
         accessorKey: "price",
         header: "Price",
-        size: 140,
+        size: 140
       },
       {
         accessorKey: "stock",
         header: "Stock",
-        size: 140,
+        size: 140
       },
       {
-        //accessorFn used to join multiple data into a single cell
-        id: "categories", //id is still required when using accessorFn instead of accessorKey
+        id: "categories",
 
         header: "Categories",
         size: 250,
         accessorFn: (row) => row.categories,
-        Cell: ({ renderedCellValue, row, column, cell }) => {
-          const categoriesArray = cell.getValue<[Category]>();
-          return categoriesArray.map((element: Category, index) => {
-            return <Chip key={index} label={element.name} />;
-          });
-        },
-      },
+        Cell: ({ cell }) => {
+          const categoriesArray = cell.getValue<[Category]>()
+          return categoriesArray.map((element: Category) => (
+            // eslint-disable-next-line no-underscore-dangle
+            <Chip key={String(element._id)} label={element.name} />
+          ))
+        }
+      }
     ],
     []
-  );
+  )
 
   return (
-    <>
-      <MaterialReactTable
-        displayColumnDefOptions={{
-          "mrt-row-actions": {
-            muiTableHeadCellProps: {
-              align: "center",
-            },
-            size: 120,
+    <MaterialReactTable
+      displayColumnDefOptions={{
+        "mrt-row-actions": {
+          muiTableHeadCellProps: {
+            align: "center"
           },
-        }}
-        columns={columns}
-        data={tableData}
-        enableColumnOrdering
-        enableEditing
-        renderRowActions={({ row, table }) => (
-          <Box sx={{ display: "flex", gap: "1rem" }}>
-            <Tooltip arrow placement="left" title="Edit">
-              <IconButton
-                onClick={() => {
-                  router.push(`/products/${row.original._id}`);
-                }}
-              >
-                <Edit />
-              </IconButton>
-            </Tooltip>
-            <Tooltip arrow placement="right" title="Delete">
-              <IconButton color="error" onClick={() => handleDeleteRow(row)}>
-                <Delete />
-              </IconButton>
-            </Tooltip>
-          </Box>
-        )}
-      />
-    </>
-  );
-};
+          size: 120
+        }
+      }}
+      columns={columns}
+      data={productData}
+      enableColumnOrdering
+      enableEditing
+      renderRowActions={({ row }) => (
+        <Box sx={{ display: "flex", gap: "1rem" }}>
+          <Tooltip arrow placement="left" title="Edit">
+            <IconButton
+              onClick={() => {
+                // eslint-disable-next-line no-underscore-dangle
+                router.push(`/products/${row.original._id}`)
+              }}
+            >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip arrow placement="right" title="Delete">
+            <IconButton color="error" onClick={() => handleDeleteRow(row)}>
+              <Delete />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
+    />
+  )
+}
 
-export default ProductList;
+export default ProductList

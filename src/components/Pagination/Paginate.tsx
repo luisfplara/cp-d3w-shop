@@ -1,11 +1,11 @@
-import ReactPaginate from 'react-paginate'
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
+import ReactPaginate from "react-paginate"
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/router"
 
 type Props = {
-  currentPage: number;
-  lastPage: number;
-  setPage?: (page: number) => void;
+  currentPage: number
+  lastPage: number
+  setPage?: (page: number) => void
 }
 
 export default function Paginate(props: Props) {
@@ -48,8 +48,8 @@ export default function Paginate(props: Props) {
             pathname: router.pathname,
             query: {
               ...router.query,
-              page,
-            },
+              page
+            }
           })
         }}
       />

@@ -1,6 +1,6 @@
-import type { NextPage } from "next";
-import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import type { NextPage } from "next"
+import Image from "next/image"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faArrowDown,
   faArrowUp,
@@ -9,16 +9,16 @@ import {
   faMars,
   faSearch,
   faUsers,
-  faVenus,
-} from "@fortawesome/free-solid-svg-icons";
+  faVenus
+} from "@fortawesome/free-solid-svg-icons"
 import {
   Button,
   ButtonGroup,
   Card,
   Dropdown,
-  ProgressBar,
-} from "react-bootstrap";
-import { Bar, Line } from "react-chartjs-2";
+  ProgressBar
+} from "react-bootstrap"
+import { Bar, Line } from "react-chartjs-2"
 import {
   BarElement,
   CategoryScale,
@@ -27,8 +27,8 @@ import {
   LinearScale,
   LineElement,
   PointElement,
-  Tooltip,
-} from "chart.js";
+  Tooltip
+} from "chart.js"
 import {
   faCcAmex,
   faCcApplePay,
@@ -37,10 +37,9 @@ import {
   faCcVisa,
   faFacebookF,
   faLinkedinIn,
-  faTwitter,
-} from "@fortawesome/free-brands-svg-icons";
-import React from "react";
-
+  faTwitter
+} from "@fortawesome/free-brands-svg-icons"
+import React from "react"
 
 Chart.register(
   CategoryScale,
@@ -50,10 +49,10 @@ Chart.register(
   BarElement,
   Tooltip,
   Filler
-);
+)
 
 const random = (min: number, max: number) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
+  Math.floor(Math.random() * (max - min + 1) + min)
 
 const Home: NextPage = () => (
   <>
@@ -93,43 +92,43 @@ const Home: NextPage = () => (
               options={{
                 plugins: {
                   legend: {
-                    display: false,
-                  },
+                    display: false
+                  }
                 },
                 maintainAspectRatio: false,
                 scales: {
                   x: {
                     grid: {
                       display: false,
-                      drawBorder: false,
+                      drawBorder: false
                     },
                     ticks: {
-                      display: false,
-                    },
+                      display: false
+                    }
                   },
                   y: {
                     min: 30,
                     max: 89,
                     display: false,
                     grid: {
-                      display: false,
+                      display: false
                     },
                     ticks: {
-                      display: false,
-                    },
-                  },
+                      display: false
+                    }
+                  }
                 },
                 elements: {
                   line: {
                     borderWidth: 1,
-                    tension: 0.4,
+                    tension: 0.4
                   },
                   point: {
                     radius: 4,
                     hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
+                    hoverRadius: 4
+                  }
+                }
               }}
               data={{
                 labels: [
@@ -139,16 +138,16 @@ const Home: NextPage = () => (
                   "April",
                   "May",
                   "June",
-                  "July",
+                  "July"
                 ],
                 datasets: [
                   {
                     label: "My First dataset",
                     backgroundColor: "transparent",
                     borderColor: "rgba(255,255,255,.55)",
-                    data: [65, 59, 84, 84, 51, 55, 40],
-                  },
-                ],
+                    data: [65, 59, 84, 84, 51, 55, 40]
+                  }
+                ]
               }}
             />
           </div>
@@ -190,42 +189,42 @@ const Home: NextPage = () => (
               options={{
                 plugins: {
                   legend: {
-                    display: false,
-                  },
+                    display: false
+                  }
                 },
                 maintainAspectRatio: false,
                 scales: {
                   x: {
                     grid: {
                       display: false,
-                      drawBorder: false,
+                      drawBorder: false
                     },
                     ticks: {
-                      display: false,
-                    },
+                      display: false
+                    }
                   },
                   y: {
                     min: -9,
                     max: 39,
                     display: false,
                     grid: {
-                      display: false,
+                      display: false
                     },
                     ticks: {
-                      display: false,
-                    },
-                  },
+                      display: false
+                    }
+                  }
                 },
                 elements: {
                   line: {
-                    borderWidth: 1,
+                    borderWidth: 1
                   },
                   point: {
                     radius: 4,
                     hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
+                    hoverRadius: 4
+                  }
+                }
               }}
               data={{
                 labels: [
@@ -235,16 +234,16 @@ const Home: NextPage = () => (
                   "April",
                   "May",
                   "June",
-                  "July",
+                  "July"
                 ],
                 datasets: [
                   {
                     label: "My First dataset",
                     backgroundColor: "transparent",
                     borderColor: "rgba(255,255,255,.55)",
-                    data: [1, 18, 9, 17, 34, 22, 11],
-                  },
-                ],
+                    data: [1, 18, 9, 17, 34, 22, 11]
+                  }
+                ]
               }}
             />
           </div>
@@ -286,29 +285,29 @@ const Home: NextPage = () => (
               options={{
                 plugins: {
                   legend: {
-                    display: false,
-                  },
+                    display: false
+                  }
                 },
                 maintainAspectRatio: false,
                 scales: {
                   x: {
-                    display: false,
+                    display: false
                   },
                   y: {
-                    display: false,
-                  },
+                    display: false
+                  }
                 },
                 elements: {
                   line: {
                     borderWidth: 2,
-                    tension: 0.4,
+                    tension: 0.4
                   },
                   point: {
                     radius: 0,
                     hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
+                    hoverRadius: 4
+                  }
+                }
               }}
               data={{
                 labels: [
@@ -318,7 +317,7 @@ const Home: NextPage = () => (
                   "April",
                   "May",
                   "June",
-                  "July",
+                  "July"
                 ],
                 datasets: [
                   {
@@ -326,9 +325,9 @@ const Home: NextPage = () => (
                     backgroundColor: "rgba(255,255,255,.2)",
                     borderColor: "rgba(255,255,255,.55)",
                     data: [78, 81, 80, 45, 34, 12, 40],
-                    fill: true,
-                  },
-                ],
+                    fill: true
+                  }
+                ]
               }}
             />
           </div>
@@ -371,30 +370,30 @@ const Home: NextPage = () => (
                 maintainAspectRatio: false,
                 plugins: {
                   legend: {
-                    display: false,
-                  },
+                    display: false
+                  }
                 },
                 scales: {
                   x: {
                     grid: {
                       display: false,
-                      drawTicks: false,
+                      drawTicks: false
                     },
                     ticks: {
-                      display: false,
-                    },
+                      display: false
+                    }
                   },
                   y: {
                     grid: {
                       display: false,
                       drawBorder: false,
-                      drawTicks: false,
+                      drawTicks: false
                     },
                     ticks: {
-                      display: false,
-                    },
-                  },
-                },
+                      display: false
+                    }
+                  }
+                }
               }}
               data={{
                 labels: [
@@ -413,7 +412,7 @@ const Home: NextPage = () => (
                   "January",
                   "February",
                   "March",
-                  "April",
+                  "April"
                 ],
                 datasets: [
                   {
@@ -422,11 +421,11 @@ const Home: NextPage = () => (
                     borderColor: "rgba(255,255,255,.55)",
                     data: [
                       78, 81, 80, 45, 34, 12, 40, 85, 65, 23, 12, 98, 34, 84,
-                      67, 82,
+                      67, 82
                     ],
-                    barPercentage: 0.6,
-                  },
-                ],
+                    barPercentage: 0.6
+                  }
+                ]
               }}
             />
           </div>
@@ -486,7 +485,7 @@ const Home: NextPage = () => (
         <div
           style={{
             height: "300px",
-            marginTop: "40px",
+            marginTop: "40px"
           }}
         >
           <Line
@@ -498,7 +497,7 @@ const Home: NextPage = () => (
                 "April",
                 "May",
                 "June",
-                "July",
+                "July"
               ],
               datasets: [
                 {
@@ -514,9 +513,9 @@ const Home: NextPage = () => (
                     random(50, 200),
                     random(50, 200),
                     random(50, 200),
-                    random(50, 200),
+                    random(50, 200)
                   ],
-                  fill: true,
+                  fill: true
                 },
                 {
                   label: "My Second dataset",
@@ -530,8 +529,8 @@ const Home: NextPage = () => (
                     random(50, 200),
                     random(50, 200),
                     random(50, 200),
-                    random(50, 200),
-                  ],
+                    random(50, 200)
+                  ]
                 },
                 {
                   label: "My Third dataset",
@@ -539,43 +538,43 @@ const Home: NextPage = () => (
                   pointHoverBackgroundColor: "#fff",
                   borderWidth: 1,
                   borderDash: [8, 5],
-                  data: [65, 65, 65, 65, 65, 65, 65],
-                },
-              ],
+                  data: [65, 65, 65, 65, 65, 65, 65]
+                }
+              ]
             }}
             options={{
               maintainAspectRatio: false,
               plugins: {
                 legend: {
-                  display: false,
-                },
+                  display: false
+                }
               },
               scales: {
                 x: {
                   grid: {
-                    drawOnChartArea: false,
-                  },
+                    drawOnChartArea: false
+                  }
                 },
                 y: {
                   beginAtZero: true,
                   max: 250,
                   ticks: {
                     maxTicksLimit: 5,
-                    stepSize: Math.ceil(250 / 5),
-                  },
-                },
+                    stepSize: Math.ceil(250 / 5)
+                  }
+                }
               },
               elements: {
                 line: {
-                  tension: 0.4,
+                  tension: 0.4
                 },
                 point: {
                   radius: 0,
                   hitRadius: 10,
                   hoverRadius: 4,
-                  hoverBorderWidth: 3,
-                },
-              },
+                  hoverBorderWidth: 3
+                }
+              }
             }}
           />
         </div>
@@ -1462,6 +1461,6 @@ const Home: NextPage = () => (
       </div>
     </div>
   </>
-);
+)
 
-export default Home;
+export default Home

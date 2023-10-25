@@ -1,27 +1,28 @@
-import {
-  Badge, Dropdown, Nav, NavItem,
-} from 'react-bootstrap'
-import Image from 'next/image'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Badge, Dropdown, Nav, NavItem } from "react-bootstrap"
+import Image from "next/image"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import {
   faBell,
   faCreditCard,
   faEnvelopeOpen,
   faFile,
   faMessage,
-  faUser,
-} from '@fortawesome/free-regular-svg-icons'
-import { PropsWithChildren } from 'react'
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+  faUser
+} from "@fortawesome/free-regular-svg-icons"
+import { PropsWithChildren } from "react"
+import { IconDefinition } from "@fortawesome/fontawesome-svg-core"
 import {
-  faGear, faListCheck, faLock, faPowerOff,
-} from '@fortawesome/free-solid-svg-icons'
-import Link from 'next/link'
-import axios from 'axios'
-import { useRouter } from 'next/router'
+  faGear,
+  faListCheck,
+  faLock,
+  faPowerOff
+} from "@fortawesome/free-solid-svg-icons"
+import Link from "next/link"
+import axios from "axios"
+import { useRouter } from "next/router"
 
 type ItemWithIconProps = {
-  icon: IconDefinition;
+  icon: IconDefinition
 } & PropsWithChildren
 
 const ItemWithIcon = (props: ItemWithIconProps) => {
@@ -39,16 +40,21 @@ export default function HeaderProfileNav() {
   const router = useRouter()
 
   const logout = async () => {
-    const res = await axios.post('/api/mock/logout')
+    const res = await axios.post("/api/mock/logout")
     if (res.status === 200) {
-      router.push('/login')
+      router.push("/login")
     }
   }
 
   return (
     <Nav>
       <Dropdown as={NavItem}>
-        <Dropdown.Toggle variant="link" bsPrefix="hide-caret" className="py-0 px-2 rounded-0" id="dropdown-profile">
+        <Dropdown.Toggle
+          variant="link"
+          bsPrefix="hide-caret"
+          className="py-0 px-2 rounded-0"
+          id="dropdown-profile"
+        >
           <div className="avatar position-relative">
             <Image
               fill
@@ -59,12 +65,16 @@ export default function HeaderProfileNav() {
           </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className="pt-0">
-          <Dropdown.Header className="bg-light fw-bold rounded-top">Account</Dropdown.Header>
+          <Dropdown.Header className="bg-light fw-bold rounded-top">
+            Account
+          </Dropdown.Header>
           <Link href="#" passHref legacyBehavior>
             <Dropdown.Item>
               <ItemWithIcon icon={faBell}>
                 Updates
-                <Badge bg="info" className="ms-2">42</Badge>
+                <Badge bg="info" className="ms-2">
+                  42
+                </Badge>
               </ItemWithIcon>
             </Dropdown.Item>
           </Link>
@@ -72,7 +82,9 @@ export default function HeaderProfileNav() {
             <Dropdown.Item>
               <ItemWithIcon icon={faEnvelopeOpen}>
                 Updates
-                <Badge bg="success" className="ms-2">42</Badge>
+                <Badge bg="success" className="ms-2">
+                  42
+                </Badge>
               </ItemWithIcon>
             </Dropdown.Item>
           </Link>
@@ -80,7 +92,9 @@ export default function HeaderProfileNav() {
             <Dropdown.Item>
               <ItemWithIcon icon={faListCheck}>
                 Tasks
-                <Badge bg="danger" className="ms-2">42</Badge>
+                <Badge bg="danger" className="ms-2">
+                  42
+                </Badge>
               </ItemWithIcon>
             </Dropdown.Item>
           </Link>
@@ -88,12 +102,16 @@ export default function HeaderProfileNav() {
             <Dropdown.Item>
               <ItemWithIcon icon={faMessage}>
                 Messages
-                <Badge bg="warning" className="ms-2">42</Badge>
+                <Badge bg="warning" className="ms-2">
+                  42
+                </Badge>
               </ItemWithIcon>
             </Dropdown.Item>
           </Link>
 
-          <Dropdown.Header className="bg-light fw-bold">Settings</Dropdown.Header>
+          <Dropdown.Header className="bg-light fw-bold">
+            Settings
+          </Dropdown.Header>
 
           <Link href="#" passHref legacyBehavior>
             <Dropdown.Item>

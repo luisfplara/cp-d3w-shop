@@ -1,13 +1,13 @@
 export interface Resource<T> {
-  data: T[];
+  data: T[]
   meta: {
-    current_page: number;
-    last_page: number;
-    from: number;
-    to: number;
-    per_page: number;
-    total: number;
-  };
+    current_page: number
+    last_page: number
+    from: number
+    to: number
+    per_page: number
+    total: number
+  }
 }
 
 const getTo = (total: number, page: number, perPage: number) => {
@@ -30,15 +30,15 @@ export const newResource = <T>(
   data: T[],
   total: number,
   page: number,
-  perPage: number,
+  perPage: number
 ): Resource<T> => ({
-    data,
-    meta: {
-      current_page: page,
-      last_page: getLastPage(total, perPage),
-      from: page === 1 ? 1 : (page - 1) * perPage + 1,
-      to: getTo(total, page, perPage),
-      per_page: perPage,
-      total,
-    },
-  })
+  data,
+  meta: {
+    current_page: page,
+    last_page: getLastPage(total, perPage),
+    from: page === 1 ? 1 : (page - 1) * perPage + 1,
+    to: getTo(total, page, perPage),
+    per_page: perPage,
+    total,
+  },
+})

@@ -1,13 +1,13 @@
-import { Button, Form, Modal } from "react-bootstrap";
-interface inputMultSelectProps {
-  show: boolean;
-  setShow(value: any): any;
+import { Button, Form, Modal } from "react-bootstrap"
+
+interface InputMultSelectProps {
+  show: boolean
+  setShow(value: boolean): void
 }
 
-const CreateCategoryModal = ({show, setShow}:inputMultSelectProps) => {
+const CreateCategoryModal = ({ show, setShow }: InputMultSelectProps) => {
+  const handleClose = () => setShow(false)
 
-  const handleClose = () => setShow(false);
- 
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -29,7 +29,7 @@ const CreateCategoryModal = ({show, setShow}:inputMultSelectProps) => {
         </Button>
       </Modal.Footer>
     </Modal>
-  );
-};
+  )
+}
 
-export default CreateCategoryModal;
+export default CreateCategoryModal
