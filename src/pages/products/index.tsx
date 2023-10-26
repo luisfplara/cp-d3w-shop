@@ -45,4 +45,4 @@ function Products() {
   )
 }
 
-export default withApollo({ ssr: typeof window === "undefined" })(Products)
+export default Products

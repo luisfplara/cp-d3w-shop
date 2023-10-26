@@ -8,16 +8,51 @@ import { ProgressBar } from "@components/ProgressBar"
 
 import { AdminLayout } from "@layout"
 
+import { ReactElement, ReactNode } from "react"
+import { NextPage } from "next"
+import { UserProvider } from "../contexts/user.context"
+import GraphQLProvider from "../../server/apollov2"
+
 config.autoAddCss = false
 
-function MyApp({ Component, pageProps }: AppProps) {
-  return (
-    <AdminLayout>
-      <ProgressBar />
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <Component {...pageProps} />
-    </AdminLayout>
+export type NextPageWithLayout<P = object, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout =
+    Component.getLayout ??
+    ((page) => (
+      <GraphQLProvider>
+        <AdminLayout>
+          <ProgressBar />
+          {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+          {page}
+        </AdminLayout>
+      </GraphQLProvider>
+    ))
+
+  return getLayout(
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <Component {...pageProps} />
   )
 }
 
 export default MyApp
+
+/*
+
+return (
+  <AdminLayout>
+    <ProgressBar />
+    { eslint-disable-next-line react/jsx-props-no-spreading }
+    <Component {...pageProps} />
+  </AdminLayout>
+)
+
+
+*/
