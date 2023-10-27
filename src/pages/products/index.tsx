@@ -8,8 +8,6 @@ import { ProductList } from "@components/Product"
 import { Product } from "@models/models"
 import { DELETE_PRODUCT, GET_PRODUCTS } from "../../../server/queries"
 
-import withApollo from "../../../server/apollo"
-
 function Products() {
   const { data } = useQuery(GET_PRODUCTS)
   const [deleteProduct] = useMutation(DELETE_PRODUCT)

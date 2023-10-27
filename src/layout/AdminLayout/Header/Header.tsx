@@ -4,12 +4,15 @@ import Link from "next/link"
 import { Button, Container } from "react-bootstrap"
 import HeaderNotificationNav from "@layout/AdminLayout/Header/HeaderNotificationNav"
 import HeaderProfileNav from "@layout/AdminLayout/Header/HeaderProfileNav"
+import useApp from "@components/useApp"
 
 type HeaderProps = {
   toggleSidebar: () => void
 }
 
 export default function Header(props: HeaderProps) {
+  const user = useApp()
+
   const { toggleSidebar } = props
 
   return (
@@ -23,16 +26,18 @@ export default function Header(props: HeaderProps) {
         >
           <FontAwesomeIcon icon={faBars} />
         </Button>
-
         <Link href="/" className="header-brand d-md-none">
           <svg width="80" height="46">
             <title>Control Panel</title>
             <use xlinkHref="/assets/brand/coreui.svg#full" />
           </svg>
         </Link>
-
         <div className="header-nav ms-auto">
           <HeaderNotificationNav />
+        </div>
+        {/* eslint-disable-next-line no-underscore-dangle */}
+        <div className="header-nav ms-2">
+          Hello, {String(user?.currentUser?.customData.name)}
         </div>
         <div className="header-nav ms-2">
           <HeaderProfileNav />

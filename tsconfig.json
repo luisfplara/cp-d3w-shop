@@ -1,16 +1,13 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
+    "sourceMap": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
@@ -20,45 +17,19 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@components": [
-        "src/components"
-      ],
-      "@components/*": [
-        "src/components/*"
-      ],
-      "@hooks": [
-        "src/hooks"
-      ],
-      "@hooks/*": [
-        "src/hooks/*"
-      ],
-      "@layout": [
-        "src/layout"
-      ],
-      "@layout/*": [
-        "src/layout/*"
-      ],
-      "@lib": [
-        "src/lib"
-      ],
-      "@lib/*": [
-        "src/lib/*"
-      ],
-      "@models": [
-        "src/models"
-      ],
-      "@models/*": [
-        "src/models/*"
-      ],
-      "@pages": [
-        "src/pages"
-      ],
-      "@store": [
-        "src/store"
-      ],
-      "@styles/*": [
-        "src/styles/*"
-      ]
+      "@components": ["src/components"],
+      "@components/*": ["src/components/*"],
+      "@hooks": ["src/hooks"],
+      "@hooks/*": ["src/hooks/*"],
+      "@layout": ["src/layout"],
+      "@layout/*": ["src/layout/*"],
+      "@lib": ["src/lib"],
+      "@lib/*": ["src/lib/*"],
+      "@models": ["src/models"],
+      "@models/*": ["src/models/*"],
+      "@pages": ["src/pages"],
+      "@store": ["src/store"],
+      "@styles/*": ["src/styles/*"]
     },
     "plugins": [
       {
@@ -70,9 +41,10 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "src/pages/api/upload/index.ts"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    ".next/types/**/*.ts",
+    "src/pages/api/upload/index.ts",
+    "src/contexts/session.context.tsx",
+    "server/apollov2.tsx"
+  ],
+  "exclude": ["node_modules"]
 }

@@ -1,4 +1,3 @@
-// import { NextPage } from "next"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUser } from "@fortawesome/free-regular-svg-icons"
 import { faLock } from "@fortawesome/free-solid-svg-icons"
@@ -14,21 +13,20 @@ import {
 import Link from "next/link"
 import { FormEvent, ReactElement, useContext, useState } from "react"
 import { useRouter } from "next/router"
-
 import { deleteCookie, getCookie } from "cookies-next"
+import { MongoDBRealmError } from "realm-web"
 import * as Realm from "realm-web"
-
-import { UserContext } from "src/contexts/user.context"
-
-import { app, loginEmailPassword } from "server/apollo"
-
+import { SessionContext } from "src/contexts/session.context"
 import { NextPageWithLayout } from "./_app"
 
 const Login: NextPageWithLayout = () => {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
   const [loginError, setLoginError] = useState<string | undefined>()
-  // const { emailPasswordLogin } = useContext(UserContext)
+  const { userSession } = useContext(SessionContext)
+
+  // const { logIn } = useContext(UserContext) as UserContextType
+  // const app = new Realm.App("application-0-wdnkb")
 
   const getRedirect = () => {
     const redirect = getCookie("redirect")
@@ -36,7 +34,6 @@ const Login: NextPageWithLayout = () => {
       deleteCookie("redirect")
       return redirect.toString()
     }
-
     return "/"
   }
 
@@ -51,68 +48,21 @@ const Login: NextPageWithLayout = () => {
     setLoginError(undefined)
 
     if (form.checkValidity() === true) {
-      const userLogin = await loginEmailPassword(
+      const credentials = Realm.Credentials.emailPassword(
         String(formData.get("email")) || "",
         String(formData.get("password")) || ""
       )
+      await userSession
+        ?.logIn(credentials)
+        .catch((error: MongoDBRealmError) => {
+          setLoginError(error.error)
+        })
 
-      console.log("userLogin", userLogin)
-
-      if (userLogin) {
-        router.push(getRedirect())
-      }
-    }
-    setSubmitting(false)
-
-    /*
-    console.log("buscouuuu")
-    if (!app.currentUser) {
-      const credentials = Realm.Credentials.emailPassword(
-        "teste@teste.com",
-        "abcd1234"
-      )
-      await app.logIn(credentials)
-    } else {
-      await app.currentUser.refreshAccessToken()
-    }
-
-    return app.currentUser.accessToken
-  
-
-    if (res.status === 200) {
-      router.push(getRedirect())
-    }
-      */
-  }
-
-  /*
-  const login = async (e: SyntheticEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
-
-    setSubmitting(true)
-
-    const res = await axios.post("api/mock/login")
-    if (res.status === 200) {
       router.push(getRedirect())
     }
     setSubmitting(false)
   }
-  
-  async function getValidAccessToken() {
-    console.log("buscouuuu")
-    if (!app.currentUser) {
-      const credentials = Realm.Credentials.emailPassword(
-        "teste@teste.com",
-        "abcd1234"
-      )
-      await app.logIn(credentials)
-    } else {
-      await app.currentUser.refreshAccessToken()
-    }
-    return app.currentUser.accessToken
-  }
-*/
+
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center dark:bg-transparent">
       <Container>

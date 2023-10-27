@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react"
 import * as Realm from "realm-web"
-import "dotenv"
-/*
+
 export default function useApp() {
-  console.log("env:   ", process.env.ATLAS_APP_ID)
-  const [app, setApp] = useState<Realm.App>()
+  const [app, setApp] = useState<Realm.App | null>()
   // Run in useEffect so that App is not created in server-side environment
   useEffect(() => {
-    setApp(Realm.getApp("application-0-wdnkb"))
+    setApp(Realm.getApp(process.env.NEXT_PUBLIC_APP_ID || ""))
   }, [])
   return app
 }
-*/

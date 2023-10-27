@@ -19,8 +19,6 @@ import {
   INSERT_PRODUCT
 } from "../../../../server/queries"
 
-import withApollo from "../../../../server/apollo"
-
 function Products() {
   const router = useRouter()
   const { id } = router.query
@@ -58,8 +56,6 @@ function Products() {
   const uploadImgToServer = async () => {
     const fileFormDataOrdened = new FormData()
 
-    console.log("images", images)
-
     images.forEach((file) => {
       if (file) if (file.file) fileFormDataOrdened.append("image", file.file)
     })
@@ -79,7 +75,7 @@ function Products() {
 
     if (form.checkValidity() === true) {
       const imagesUrl = await uploadImgToServer()
-      console.log("imagesUrl", imagesUrl)
+
       insertProduct({
         variables: {
           name: formData.get("NameInput"),
@@ -106,7 +102,6 @@ function Products() {
 
     if (form.checkValidity() === true) {
       const imagesUrl = await uploadImgToServer()
-      console.log("imagesUrl", imagesUrl)
 
       updateProduct({
         variables: {
@@ -119,8 +114,7 @@ function Products() {
           categories: productCategories?.map((obj) => obj?._id),
           images: imagesUrl.uploads ? imagesUrl.uploads : product?.images
         }
-      }).then((result) => {
-        console.log(result)
+      }).then(() => {
         setValidated(false)
         form.reset()
       })
@@ -176,4 +170,4 @@ function Products() {
   )
 }
 
-export default withApollo({ ssr: typeof window === "undefined" })(Products)
+export default Products

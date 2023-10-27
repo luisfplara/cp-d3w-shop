@@ -10,7 +10,7 @@ import { AdminLayout } from "@layout"
 
 import { ReactElement, ReactNode } from "react"
 import { NextPage } from "next"
-import { UserProvider } from "../contexts/user.context"
+import { SessionProvider } from "../contexts/session.context"
 import GraphQLProvider from "../../server/apollov2"
 
 config.autoAddCss = false
@@ -26,19 +26,26 @@ type AppPropsWithLayout = AppProps & {
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout =
     Component.getLayout ??
-    ((page) => (
-      <GraphQLProvider>
+    ((page) =>
+      page.props.statusCode !== 404 ? (
         <AdminLayout>
           <ProgressBar />
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           {page}
         </AdminLayout>
-      </GraphQLProvider>
-    ))
+      ) : (
+        page
+      ))
 
-  return getLayout(
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <Component {...pageProps} />
+  return (
+    <SessionProvider>
+      <GraphQLProvider>
+        {getLayout(
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
+          <Component {...pageProps} />
+        )}
+      </GraphQLProvider>
+    </SessionProvider>
   )
 }
 
