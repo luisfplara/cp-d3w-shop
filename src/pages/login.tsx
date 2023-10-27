@@ -54,11 +54,12 @@ const Login: NextPageWithLayout = () => {
       )
       await userSession
         ?.logIn(credentials)
+        .then(() => {
+          router.push(getRedirect())
+        })
         .catch((error: MongoDBRealmError) => {
           setLoginError(error.error)
         })
-
-      router.push(getRedirect())
     }
     setSubmitting(false)
   }
