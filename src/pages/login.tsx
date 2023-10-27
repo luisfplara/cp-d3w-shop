@@ -1,38 +1,63 @@
-import { NextPage } from 'next'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser } from '@fortawesome/free-regular-svg-icons'
-import { faLock } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faUser } from "@fortawesome/free-regular-svg-icons"
+import { faLock } from "@fortawesome/free-solid-svg-icons"
 import {
-  Button, Col, Container, Form, InputGroup, Row,
-} from 'react-bootstrap'
-import Link from 'next/link'
-import { SyntheticEvent, useState } from 'react'
-import { useRouter } from 'next/router'
-import axios from 'axios'
-import { deleteCookie, getCookie } from 'cookies-next'
+  Alert,
+  Button,
+  Col,
+  Container,
+  Form,
+  InputGroup,
+  Row
+} from "react-bootstrap"
+import Link from "next/link"
+import { FormEvent, ReactElement, useContext, useState } from "react"
+import { useRouter } from "next/router"
+import { deleteCookie, getCookie } from "cookies-next"
+import { MongoDBRealmError } from "realm-web"
+import * as Realm from "realm-web"
+import { SessionContext } from "src/contexts/session.context"
+import { NextPageWithLayout } from "./_app"
 
-const Login: NextPage = () => {
+const Login: NextPageWithLayout = () => {
   const router = useRouter()
   const [submitting, setSubmitting] = useState(false)
+  const [loginError, setLoginError] = useState<string | undefined>()
+  const { userSession } = useContext(SessionContext)
+
+  // const { logIn } = useContext(UserContext) as UserContextType
+  // const app = new Realm.App("application-0-wdnkb")
 
   const getRedirect = () => {
-    const redirect = getCookie('redirect')
+    const redirect = getCookie("redirect")
     if (redirect) {
-      deleteCookie('redirect')
+      deleteCookie("redirect")
       return redirect.toString()
     }
-
-    return '/'
+    return "/"
   }
 
-  const login = async (e: SyntheticEvent) => {
+  const login = async (e: FormEvent<HTMLFormElement>) => {
     e.stopPropagation()
     e.preventDefault()
 
-    setSubmitting(true)
+    const form = e.currentTarget
+    const formData = new FormData(form)
 
-    const res = await axios.post('api/mock/login')
-    if (res.status === 200) {
+    setSubmitting(true)
+    setLoginError(undefined)
+
+    if (form.checkValidity() === true) {
+      const credentials = Realm.Credentials.emailPassword(
+        String(formData.get("email")) || "",
+        String(formData.get("password")) || ""
+      )
+      await userSession
+        ?.logIn(credentials)
+        .catch((error: MongoDBRealmError) => {
+          setLoginError(error.error)
+        })
+
       router.push(getRedirect())
     }
     setSubmitting(false)
@@ -52,27 +77,19 @@ const Login: NextPage = () => {
                   <form onSubmit={login}>
                     <InputGroup className="mb-3">
                       <InputGroup.Text>
-                        <FontAwesomeIcon
-                          icon={faUser}
-                          fixedWidth
-                        />
+                        <FontAwesomeIcon icon={faUser} fixedWidth />
                       </InputGroup.Text>
                       <Form.Control
-                        name="username"
+                        name="email"
                         required
                         disabled={submitting}
-                        placeholder="Username"
-                        aria-label="Username"
-                        defaultValue="Username"
+                        placeholder="Email"
+                        aria-label="Email"
                       />
                     </InputGroup>
-
                     <InputGroup className="mb-3">
                       <InputGroup.Text>
-                        <FontAwesomeIcon
-                          icon={faLock}
-                          fixedWidth
-                        />
+                        <FontAwesomeIcon icon={faLock} fixedWidth />
                       </InputGroup.Text>
                       <Form.Control
                         type="password"
@@ -81,18 +98,28 @@ const Login: NextPage = () => {
                         disabled={submitting}
                         placeholder="Password"
                         aria-label="Password"
-                        defaultValue="Password"
                       />
                     </InputGroup>
 
+                    {loginError && (
+                      <Alert key="danger" variant="danger">
+                        {loginError}
+                      </Alert>
+                    )}
                     <Row>
                       <Col xs={6}>
-                        <Button className="px-4" variant="primary" type="submit" disabled={submitting}>Login</Button>
+                        <Button
+                          className="px-4"
+                          variant="primary"
+                          type="submit"
+                          disabled={submitting}
+                        >
+                          Login
+                        </Button>
                       </Col>
                       <Col xs={6} className="text-end">
                         <Button className="px-0" variant="link" type="submit">
-                          Forgot
-                          password?
+                          Forgot password?
                         </Button>
                       </Col>
                     </Row>
@@ -106,11 +133,13 @@ const Login: NextPage = () => {
                 <div className="text-center">
                   <h2>Sign up</h2>
                   <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                    tempor incididunt ut labore et dolore magna aliqua.
+                    Create a free account to use the basic tools of our platform
                   </p>
                   <Link href="/register">
-                    <button className="btn btn-lg btn-outline-light mt-3" type="button">
+                    <button
+                      className="btn btn-lg btn-outline-light mt-3"
+                      type="button"
+                    >
                       Register Now!
                     </button>
                   </Link>
@@ -123,5 +152,7 @@ const Login: NextPage = () => {
     </div>
   )
 }
-
+Login.getLayout = function getLayout(page: ReactElement) {
+  return page
+}
 export default Login

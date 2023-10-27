@@ -25,8 +25,6 @@ const uploadImg = async (req: NextApiRequest, res: NextApiResponse) => {
   const responseImagesUrl: { url: string }[] = []
   const responseError: unknown[] = []
 
-  console.log("filesfiles", files)
-
   if (files.image) {
     // eslint-disable-next-line no-restricted-syntax
     for (const images of files.image) {

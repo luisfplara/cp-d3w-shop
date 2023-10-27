@@ -9,7 +9,7 @@ import {
   faMessage,
   faUser
 } from "@fortawesome/free-regular-svg-icons"
-import { PropsWithChildren } from "react"
+import { PropsWithChildren, useContext } from "react"
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core"
 import {
   faGear,
@@ -18,8 +18,10 @@ import {
   faPowerOff
 } from "@fortawesome/free-solid-svg-icons"
 import Link from "next/link"
-import axios from "axios"
+// import axios from "axios"
 import { useRouter } from "next/router"
+
+import { SessionContext } from "src/contexts/session.context"
 
 type ItemWithIconProps = {
   icon: IconDefinition
@@ -38,12 +40,17 @@ const ItemWithIcon = (props: ItemWithIconProps) => {
 
 export default function HeaderProfileNav() {
   const router = useRouter()
+  const { userSession } = useContext(SessionContext)
 
   const logout = async () => {
+    userSession?.currentUser?.logOut()
+    router.reload()
+    /*
     const res = await axios.post("/api/mock/logout")
     if (res.status === 200) {
       router.push("/login")
     }
+    */
   }
 
   return (
