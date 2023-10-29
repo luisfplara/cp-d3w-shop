@@ -1,5 +1,6 @@
 import { Category } from "@models/models"
 import Multiselect from "multiselect-react-dropdown"
+import { RefObject } from "react"
 import { Button, Col, Form, Row } from "react-bootstrap"
 
 interface InputMultSelectProps {
@@ -8,6 +9,7 @@ interface InputMultSelectProps {
   showModal?(): void
   setCategories(prevState: (Category | undefined)[]): void
   defaultValue?: [Category]
+  ref: RefObject<Multiselect>
 }
 
 const InputMultSelect = ({
@@ -15,7 +17,8 @@ const InputMultSelect = ({
   list,
   showModal = () => {},
   setCategories,
-  defaultValue
+  defaultValue,
+  ref
 }: InputMultSelectProps) => {
   const handleCategories = (selectedList: (Category | undefined)[]) =>
     setCategories(selectedList)
@@ -26,6 +29,7 @@ const InputMultSelect = ({
       <Row>
         <Col>
           <Multiselect
+            ref={ref}
             placeholder="Select"
             selectedValues={defaultValue}
             displayValue="name"

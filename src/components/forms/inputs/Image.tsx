@@ -35,6 +35,7 @@ const InputImages = ({
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
+      onChangeImage(() => [])
       Array.from(event.target.files).map((item) =>
         onChangeImage((prevImages: (Media | undefined)[]) =>
           prevImages
@@ -50,7 +51,7 @@ const InputImages = ({
       arrayMoveImmutable(array, oldIndex, newIndex)
     )
   }
-
+  console.log("imagesList", imagesList)
   return (
     <Col>
       <Form.Group controlId="formFileMultiple" className="mb-3">
@@ -67,6 +68,7 @@ const InputImages = ({
       </Form.Group>
 
       <Form.Group controlId="formFileMultiple" className="mb-3">
+        {imagesList?.length !== 0 ? "Drag and drop to select the order" : ""}
         <SortableList
           onSortEnd={onSortEnd}
           className="list"
@@ -88,6 +90,7 @@ const InputImages = ({
                     src={item?.url}
                     rounded
                     draggable={false}
+                    className="mx-10"
                   />
                 </SortableItem>
               ))

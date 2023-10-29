@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/react-hooks"
 import { Button, Form } from "react-bootstrap"
 import { Category, Media, Product } from "@models/models"
 import { useRouter } from "next/router"
+import Multiselect from "multiselect-react-dropdown"
 
 import InputText from "@components/forms/inputs/Text"
 import InputTextArea from "@components/forms/inputs/TextArea"
@@ -38,6 +39,7 @@ function Products() {
   const [validated, setValidated] = useState(false)
   const [categories, setCategories] = useState<[Category]>()
   const [product, setProduct] = useState<Product>()
+  const multiselectRef = React.createRef<Multiselect>()
 
   const handleShow = () => setShow(true)
 
@@ -88,6 +90,9 @@ function Products() {
         }
       }).then(() => {
         setValidated(false)
+        setImages([])
+        multiselectRef?.current?.resetSelectedValues()
+
         form.reset()
       })
     }
@@ -116,9 +121,12 @@ function Products() {
         }
       }).then(() => {
         setValidated(false)
+        setImages([])
+        multiselectRef?.current?.resetSelectedValues()
         form.reset()
       })
     }
+
     setValidated(true)
   }
 
@@ -148,6 +156,7 @@ function Products() {
           list={categories}
           setCategories={setProductCategories}
           showModal={handleShow}
+          ref={multiselectRef}
           defaultValue={product?.categories}
         />
 

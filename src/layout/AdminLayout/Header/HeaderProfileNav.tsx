@@ -45,12 +45,6 @@ export default function HeaderProfileNav() {
   const logout = async () => {
     userSession?.currentUser?.logOut()
     router.reload()
-    /*
-    const res = await axios.post("/api/mock/logout")
-    if (res.status === 200) {
-      router.push("/login")
-    }
-    */
   }
 
   return (

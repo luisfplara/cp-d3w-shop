@@ -7,6 +7,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css"
 import { ProgressBar } from "@components/ProgressBar"
 
 import { AdminLayout } from "@layout"
+import SessionController from "src/controllers/session.controller"
 
 import { ReactElement, ReactNode } from "react"
 import { NextPage } from "next"
@@ -39,12 +40,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <SessionProvider>
-      <GraphQLProvider>
-        {getLayout(
-          /* eslint-disable-next-line react/jsx-props-no-spreading */
-          <Component {...pageProps} />
-        )}
-      </GraphQLProvider>
+      <SessionController>
+        <GraphQLProvider>
+          {getLayout(
+            /* eslint-disable-next-line react/jsx-props-no-spreading */
+            <Component {...pageProps} />
+          )}
+        </GraphQLProvider>
+      </SessionController>
     </SessionProvider>
   )
 }
