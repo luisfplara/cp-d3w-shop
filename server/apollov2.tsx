@@ -17,6 +17,7 @@ async function getValidAccessToken(
   if (!app?.currentUser) {
     login()
   } else {
+    // fazer login se refresh acess token der errado
     await app?.currentUser.refreshAccessToken()
   }
   return app?.currentUser?.accessToken

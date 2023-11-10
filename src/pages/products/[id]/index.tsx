@@ -50,6 +50,7 @@ function Products() {
   }, [data])
 
   useEffect(() => {
+    console.log("categoriesData", categoriesData)
     if (categoriesData && categoriesData.categories) {
       setCategories(categoriesData.categories)
     }

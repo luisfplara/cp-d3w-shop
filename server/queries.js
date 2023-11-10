@@ -157,6 +157,15 @@ export const product = {
   UPDATE_PRODUCT,
 }
 
+export const INSERT_CATEGORY = gql`
+  mutation insertOneCategory($name: String!) {
+    insertOneCategory(data: { name: $name }) {
+      _id
+      name
+    }
+  }
+`
+
 export const GET_CATEGORIES = gql`
   query products {
     categories {
